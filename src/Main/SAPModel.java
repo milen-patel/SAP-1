@@ -7,6 +7,7 @@ public class SAPModel {
 	Register regIR;
 	PC programCounter;
 	int stepCount;
+	Memory RAM;
 
 	public SAPModel() {
 		this.regA = new Register8Bit();
@@ -15,6 +16,7 @@ public class SAPModel {
 		this.regIR = new Register8Bit();
 		this.programCounter = new PC();
 		this.stepCount = 0;
+		this.RAM = new Memory();
 	}
 	
 	public void reset() {
