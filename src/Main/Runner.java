@@ -7,8 +7,6 @@ import javax.swing.JFrame;
 public class Runner {
 	
 	public static void main(String[] args) {
-		
-		System.out.println("Start of main method execution");
 		View view = new View();
 
 		/* Create a frame and add the view to it */
@@ -18,7 +16,7 @@ public class Runner {
 		main_frame.setContentPane(view);
 
 		/* Lock in dimensions */
-		main_frame.setPreferredSize(new Dimension(1200, 960));
+		main_frame.setPreferredSize(new Dimension(2318/3, 1600/3));
 		main_frame.setResizable(false);
 
 		/* Make the frame visible */
