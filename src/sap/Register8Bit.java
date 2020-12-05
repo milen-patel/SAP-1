@@ -1,9 +1,9 @@
-package Main;
+package sap;
 
-public class PC implements Register{
+public class Register8Bit implements Register {
 	private byte content;
 	
-	public PC() {
+	public Register8Bit() {
 		this.content = 0;
 	}
 
@@ -17,14 +17,6 @@ public class PC implements Register{
 		return this.content;
 	}
 	
-	public void counterEnable() {
-		if (this.content == 15) {
-			this.content = 0;
-		} else {
-			this.content++;
-		}
-	}
-
 	@Override
 	public void clear() {
 		this.content = 0;

@@ -1,4 +1,4 @@
-package Main;
+package sap;
 
 public class SAPModel {
 	Register regA;

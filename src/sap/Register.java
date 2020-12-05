@@ -1,4 +1,4 @@
-package Main;
+package sap;
 
 public interface Register {
 	public void loadVal(byte newVal);

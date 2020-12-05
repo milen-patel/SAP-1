@@ -1,4 +1,4 @@
-package Main;
+package sap;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

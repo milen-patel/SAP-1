@@ -1,4 +1,4 @@
-package Main;
+package sap;
 
 public class Register4Bit implements Register {
 

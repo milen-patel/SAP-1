@@ -1,4 +1,4 @@
-package Main;
+package sap;
 
 public class RegisterFlags {
 	boolean zeroFlag;
