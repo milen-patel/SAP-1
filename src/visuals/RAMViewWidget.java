@@ -57,121 +57,45 @@ public class RAMViewWidget extends JPanel {
 		c.gridx = 0;
 		c.gridy = 0;
 		this.add(new JLabel("Memory Content"), c);
-		c.gridx = 1;
-		c.gridy = 1;
-		this.add(new JLabel("[0000]: "), c);
-	   
+		
+		for (int i = 1; i <= 16; i++) {
+			c.gridx = 1;
+			c.gridy = i;
+			switch (i-1) {
+			case 0:
+				this.add(new JLabel("[0000]: "), c);
+				break;
+			case 1:
+				this.add(new JLabel("[0001]: "), c);
+				break;
+			case 2:
+				this.add(new JLabel("[0010]: "), c);
+				break;
+			case 3:
+				this.add(new JLabel("[0011]: "), c);
+				break;
+			case 4:
+				this.add(new JLabel("[0100]: "), c);
+				break;
+			case 5:
+				this.add(new JLabel("[0101]: "), c);
+				break;
+			case 6:
+				this.add(new JLabel("[0110]: "), c);
+				break;
+			case 7:
+				this.add(new JLabel("[0111]: "), c);
+				break;
+			default:
+				this.add(new JLabel("["+Integer.toBinaryString(i-1)+"]: "), c);
 
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
+			}
+			for (int j = 2; j < 10; j++) {
+				c.gridx = j;
+				this.add(butts[c.gridy-1][j-2], c);
+			}
 		}
 		
-		c.gridx = 1;
-		c.gridy = 2;
-		this.add(new JLabel("[0001]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 3;
-		this.add(new JLabel("[0010]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 4;
-		this.add(new JLabel("[0011]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 5;
-		this.add(new JLabel("[0100]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 6;
-		this.add(new JLabel("[0101]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 7;
-		this.add(new JLabel("[0110]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 8;
-		this.add(new JLabel("[0111]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 9;
-		this.add(new JLabel("[1000]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 10;
-		this.add(new JLabel("[1001]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 11;
-		this.add(new JLabel("[1010]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 12;
-		this.add(new JLabel("[1011]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 13;
-		this.add(new JLabel("[1100]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 14;
-		this.add(new JLabel("[1101]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 15;
-		this.add(new JLabel("[1110]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
-		c.gridx = 1;
-		c.gridy = 16;
-		this.add(new JLabel("[1111]: "), c);
-		for (int i = 2; i < 10; i++) {
-			c.gridx = i;
-			this.add(butts[c.gridy-1][i-2], c);
-		}
 		repaint();
 	}
 

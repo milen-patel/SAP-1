@@ -6,7 +6,6 @@ public class Memory {
 	
 	public Memory() {
 		this.data = new int[16];
-		data[3] = 8;
 		this.MAR = new Register4Bit();
 	}
 	
