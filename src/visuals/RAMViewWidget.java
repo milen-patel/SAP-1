@@ -30,7 +30,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver {
 	 *  bitPos: [0, 7]
 	 */
 	private int lookupRAM(int address, int bitPos) {
-		int val = 0b1111 & this.model.getRAM().getRAM()[address];
+		int val = 0b11111111 & this.model.getRAM().getRAM()[address];
 		return (val >> bitPos) & 0b1;
 	}
 

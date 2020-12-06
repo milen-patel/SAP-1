@@ -24,13 +24,5 @@ public class Runner {
 		/* Make the frame visible */
 		main_frame.pack();
 		main_frame.setVisible(true);
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 }

@@ -1,18 +1,25 @@
 package sap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 public class Memory {
-	private int[] data;
+	private byte[] data;
 	private Register MAR;
 	private List<RAMObserver> observers;
 	public Memory() {
-		this.data = new int[16];
+		this.data = new byte[16];
 		this.MAR = new Register4Bit();
 		this.observers = new ArrayList<RAMObserver>();
+		
+		// Load garbage values into memory
+		for (int i = 0; i < 16; i++) {
+			this.data[i] = (byte) ThreadLocalRandom.current().nextInt(0, 254);
+		}
 	}
 	
-	public void memoryIn(int val) {
+	public void memoryIn(byte val) {
 		this.data[this.MAR.getVal()] = val;
 		this.notifyObservers(this.MAR.getVal());
 	}
@@ -21,7 +28,7 @@ public class Memory {
 		return this.data[this.MAR.getVal()];
 	}
 	
-	public int[] getRAM() {
+	public byte[] getRAM() {
 		return this.data;
 	}
 	
