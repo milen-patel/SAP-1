@@ -16,9 +16,12 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	private GridBagConstraints c;
 	private JButton[][] butts;
 	private static Dimension buttonSize = new Dimension(20, 20);
+	private static Color COLOR_ON = new Color(124,248,42);
+	private static Color COLOR_OFF = new Color(34,82,20);
 
 	/*
-	 * Address: [0, 15] bitPos: [0, 7]
+	 * Address: [0, 15] 
+	 * bitPos: [0, 7]
 	 */
 	private int lookupRAM(int address, int bitPos) {
 		int val = 0b11111111 & this.model.getRAM().getRAM()[address];
@@ -37,6 +40,9 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 				this.butts[i][j].setPreferredSize(buttonSize);
 				this.butts[i][j].setActionCommand(i + "," + j);
 				this.butts[i][j].addActionListener(this);
+				this.butts[i][j].setBorder(null);
+				this.butts[i][j].setBackground(butts[i][j].getText().equals("1") ? COLOR_ON : COLOR_OFF );
+				this.butts[i][j].setOpaque(true);
 			}
 		}
 
@@ -98,6 +104,8 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	public void valChanged(int address) {
 		for (int i = 0; i <= 7; i++) {
 			this.butts[address][i].setText("" + lookupRAM(address, 7 - i));
+			this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF );
+			this.butts[address][i].setBorder(null);
 		}
 	}
 
