@@ -24,6 +24,11 @@ public class Memory {
 		this.notifyObservers(this.MAR.getVal());
 	}
 	
+	public void manualValueChange(int address, byte newVal) {
+		this.data[address] = newVal;
+		this.notifyObservers(address);
+	}
+	
 	public int memoryOut() {
 		return this.data[this.MAR.getVal()];
 	}
