@@ -21,8 +21,8 @@ import sap.SAPModel;
 
 public class View extends JPanel implements sap.LogObserver, ActionListener {
 	
-	SAPModel model;
-	JLabel welcome_label;
+	private SAPModel model;
+	private JLabel welcome_label;
 	private GridBagConstraints c;
 	private JTextArea logLabel;
 	private JButton resetButton;

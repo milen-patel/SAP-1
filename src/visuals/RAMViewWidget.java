@@ -19,7 +19,7 @@ import javax.swing.*;
 
 import sap.SAPModel;
 
-public class RAMViewWidget extends JPanel {
+public class RAMViewWidget extends JPanel implements sap.RAMObserver {
 	private sap.SAPModel model;
 	private GridBagConstraints c;
 	private JButton[][] butts;
@@ -30,12 +30,14 @@ public class RAMViewWidget extends JPanel {
 	 *  bitPos: [0, 7]
 	 */
 	private int lookupRAM(int address, int bitPos) {
-		int val = this.model.getRAM().getRAM()[address];
+		int val = 0b1111 & this.model.getRAM().getRAM()[address];
 		return (val >> bitPos) & 0b1;
 	}
 
 	public RAMViewWidget(sap.SAPModel model) {
 		this.model = model;
+		// Add ourselves as a RAMObserver
+		this.model.getRAM().addRAMObserver(this);
 		
 		butts = new JButton[16][8];
 		for (int i = 0; i < 16; i++) {
@@ -97,6 +99,13 @@ public class RAMViewWidget extends JPanel {
 		}
 		
 		repaint();
+	}
+
+	@Override
+	public void valChanged(int address) {
+		for (int i = 0; i <= 7; i++) {
+			this.butts[address][i].setText(""+lookupRAM(address,7-i));
+		}
 	}
 
 }
