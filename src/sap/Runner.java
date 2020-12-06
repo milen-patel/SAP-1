@@ -4,6 +4,8 @@ import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
+import visuals.View;
+
 public class Runner {
 	
 	public static void main(String[] args) {
@@ -16,7 +18,7 @@ public class Runner {
 		main_frame.setContentPane(view);
 
 		/* Lock in dimensions */
-		main_frame.setPreferredSize(new Dimension(2318/3, 1600/3));
+		main_frame.setPreferredSize(new Dimension(500+2318/3, 100+1600/3));
 		main_frame.setResizable(false);
 
 		/* Make the frame visible */
