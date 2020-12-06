@@ -6,6 +6,7 @@ public class Memory {
 	
 	public Memory() {
 		this.data = new int[16];
+		data[3] = 8;
 		this.MAR = new Register4Bit();
 	}
 	
@@ -15,6 +16,10 @@ public class Memory {
 	
 	public int memoryOut() {
 		return this.data[this.MAR.getVal()];
+	}
+	
+	public int[] getRAM() {
+		return this.data;
 	}
 
 }

@@ -30,6 +30,10 @@ public class SAPModel {
 		this.regIR.clear();
 	}
 	
+	public Memory getRAM() {
+		return this.RAM;
+	}
+	
 
 	
 }
