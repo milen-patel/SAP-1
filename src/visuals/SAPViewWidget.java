@@ -387,8 +387,6 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 
 	@Override
 	public void flagChange() {
-		// TODO Auto-generated method stub
-
 		this.zFlag.setText(this.model.getFlags().getZF() ? "Z" : "-Z");
 		this.cFlag.setText(this.model.getFlags().getCF() ? "C" : "-C");
 	}
@@ -411,5 +409,6 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			}
 		}
 	}
+
 
 }

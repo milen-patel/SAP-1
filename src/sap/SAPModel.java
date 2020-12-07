@@ -164,7 +164,7 @@ public class SAPModel implements ClockObserver {
 		this.observers.remove(o);
 	}
 
-	private void notifyFlagChange() {
+	private void notifyControlLineChange() {
 		for (SAPObserver o : observers) {
 			o.controlLineChange();
 		}
@@ -194,10 +194,40 @@ public class SAPModel implements ClockObserver {
 		}
 	}
 	
+	private void notifyIRChange() {
+		for (SAPObserver o : observers) {
+			o.irChange(this.regIR.getVal());
+		}
+	}
+	
+	private void notifyAChange() {
+		for (SAPObserver o : observers) {
+			o.regAChange(this.regA.getVal());
+		}
+	}
+	
+	private void notifyBChange() {
+		for (SAPObserver o : observers) {
+			o.regBChange(this.regB.getVal());
+		}
+	}
+	
+	private void notifyOutChange() {
+		for (SAPObserver o : observers) {
+			o.outChange(this.regOut.getVal());
+		}
+	}
+	private void notifyFlagRegisterChange() {
+		for (SAPObserver o : observers) {
+			o.flagChange();
+		}
+	}
 	private void resetAllControlLines() {
 		for (int i = 0; i < 15; i++) {
 			this.controlLines[i] = false;
 		}
+		this.bus.loadVal((byte) 0);
+		this.notifyBusChange();
 	}
 
 	@Override
@@ -217,7 +247,7 @@ public class SAPModel implements ClockObserver {
 				this.resetAllControlLines();
 				this.controlLines[CO] = true;
 				this.controlLines[MI] = true;
-				notifyFlagChange();
+				notifyControlLineChange();
 				EventLog.getEventLog().addEntry("Falling edge of cycle 1. The following control lines were set: CO, MI");
 				return;
 			}
@@ -228,14 +258,16 @@ public class SAPModel implements ClockObserver {
 				this.controlLines[CE] = true;
 				this.controlLines[RO] = true;
 				this.controlLines[II] = true;
-				notifyFlagChange();
+				notifyControlLineChange();
 				EventLog.getEventLog().addEntry("Falling edge of cycle 2. The following control lines were set: CE, RO, II");
 				return;
 			}
 			
 			//temp
+			// todo, all out flags should go
+			// todo bus is empty when an out flag goes off
 			this.resetAllControlLines();
-			notifyFlagChange();
+			notifyControlLineChange();
 			return;
 		
 		} else {
@@ -253,18 +285,50 @@ public class SAPModel implements ClockObserver {
 				this.notifyPCChange();
 			}
 			if (this.controlLines[HLT]) {}
-			if (this.controlLines[RI]) {}
-			if (this.controlLines[RO]) {}
-			if (this.controlLines[IO]) {}
-			if (this.controlLines[II]) {}
-			if (this.controlLines[AI]) {}
-			if (this.controlLines[AO]) {}
-			if (this.controlLines[SO]) {}
+			if (this.controlLines[RI]) {
+				this.RAM.memoryIn(this.bus.getVal());
+			}
+			if (this.controlLines[RO]) {
+				this.bus.loadVal((byte) this.RAM.memoryOut());
+				this.notifyBusChange();
+			}
+			if (this.controlLines[IO]) {
+				this.bus.loadVal(this.regIR.getVal());
+				this.notifyBusChange();
+			}
+			if (this.controlLines[II]) {
+				this.regIR.loadVal(this.bus.getVal());
+				this.notifyIRChange();
+			}
+			if (this.controlLines[AI]) {
+				this.regA.loadVal(this.bus.getVal());
+				this.notifyAChange();
+			}
+			if (this.controlLines[AO]) {
+				this.bus.loadVal(this.regA.getVal());
+				this.notifyBusChange();
+			}
+			if (this.controlLines[SO]) {
+				this.bus.loadVal(this.adder.ALUOut(this.controlLines[SU]));
+				this.notifyBusChange();
+			}
 			if (this.controlLines[SU]) {}
-			if (this.controlLines[BI]) {}
-			if (this.controlLines[OI]) {}
-			if (this.controlLines[J]) {}
-			if (this.controlLines[FI]) {}
+			if (this.controlLines[BI]) {
+				this.regB.loadVal(this.bus.getVal());
+				this.notifyBChange();
+			}
+			if (this.controlLines[OI]) {
+				this.regOut.loadVal(this.bus.getVal());
+				this.notifyOutChange();
+			}
+			if (this.controlLines[J]) {
+				this.programCounter.loadVal((byte) (this.bus.getVal() & 0b1111));
+				this.notifyPCChange();
+			}
+			if (this.controlLines[FI]) {
+				this.adder.flagsIn(this.controlLines[SU]);
+				this.notifyFlagRegisterChange();
+			}
 		}
 
 	}
