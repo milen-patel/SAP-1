@@ -8,9 +8,9 @@ public class Memory {
 	private byte[] data;
 	private Register MAR;
 	private List<RAMObserver> observers;
-	public Memory() {
+	public Memory(Register MAR) {
 		this.data = new byte[16];
-		this.MAR = new Register4Bit();
+		this.MAR = MAR;
 		this.observers = new ArrayList<RAMObserver>();
 		
 		// Load garbage values into memory
@@ -30,7 +30,8 @@ public class Memory {
 	}
 	
 	public int memoryOut() {
-		return this.data[this.MAR.getVal()];
+		EventLog.getEventLog().addEntry("TMP: " + this.MAR.getVal());
+		return this.data[(int) this.MAR.getVal()];
 	}
 	
 	public byte[] getRAM() {

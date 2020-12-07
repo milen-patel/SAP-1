@@ -1,24 +1,15 @@
 package visuals;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.image.BufferedImage;
-import java.awt.event.*;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.*;
 
-import sap.SAPModel;
 import sap.SAPModel.RegisterType;
 import sap.SAPObserver;
 

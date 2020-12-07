@@ -6,11 +6,13 @@ import java.util.List;
 /* Singleton clock */
 public class Clock {
 	private boolean status;
+	private boolean isHalted;
 	private List<ClockObserver> observers;
 	private static Clock clock;
 
 	public Clock() {
 		this.status = false;
+		this.isHalted = false;
 		observers = new ArrayList<ClockObserver>();
 	}
 
@@ -18,9 +20,20 @@ public class Clock {
 		getClock();
 		return this.status;
 	}
+	
+	public void setIsHalted(boolean newVal) {
+		this.isHalted = newVal;
+	}
 
 	public void toggleClock() {
+		// Validate that a clock exists
 		getClock();
+		
+		// If halted, do nothing
+		if (this.isHalted) {
+			return;
+		}
+		
 		this.status = !this.status;
 		notifyObservers();
 		
