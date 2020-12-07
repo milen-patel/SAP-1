@@ -19,6 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.*;
 
 import sap.SAPModel;
+import sap.SAPModel.RegisterType;
 
 public class SAPViewWidget extends JPanel {
 	private sap.SAPModel model;
@@ -33,10 +34,6 @@ public class SAPViewWidget extends JPanel {
 	private JLabel label_MAR;
 	private JLabel label_flags;
 	private JLabel label_stepCount;
-
-	private enum RegisterType {
-		A, B, ALU, IR, OUT, PC, MAR
-	}
 
 	private JButton[] aBits;
 	private JButton[] bBits;
@@ -254,31 +251,25 @@ public class SAPViewWidget extends JPanel {
 	}
 
 	private String decodeRegister(RegisterType t, int bitPos) {
+		byte val = 0;
 		if (t == RegisterType.A) {
-			// Grab the value of register A
-			byte val = this.model.getA().getVal();
-			return "" + (0b1 & (val >> bitPos));
+			val = this.model.getA().getVal();
 		} else if (t == RegisterType.B) {
-			byte val = this.model.getB().getVal();
-			return "" + (0b1 & (val >> bitPos));
+			val = this.model.getB().getVal();
 		} else if (t == RegisterType.ALU) {
 			// TODO: Handle subtraction
-			byte val = this.model.getALU().ALUOut(false);
-			return "" + (0b1 & (val >> bitPos));
+			val = this.model.getALU().ALUOut(false);
 		} else if (t == RegisterType.IR) {
-			byte val = this.model.getIR().getVal();
-			return "" + (0b1 & (val >> bitPos));
+			val = this.model.getIR().getVal();
 		} else if (t == RegisterType.OUT) {
-			byte val = this.model.getOut().getVal();
-			return "" + (0b1 & (val >> bitPos));
+			val = this.model.getOut().getVal();
 		} else if (t == RegisterType.PC) {
-			byte val = this.model.getPC().getVal();
-			return "" + (0b1 & (val >> bitPos));
+			val = this.model.getPC().getVal();
 		} else if (t == RegisterType.MAR) {
-			byte val = this.model.getMAR().getVal();
-			return "" + (0b1 & (val >> bitPos));
+			val = this.model.getMAR().getVal();
 		}
-		return null;
+		return "" + (0b1 & (val >> bitPos));
+
 	}
 
 }

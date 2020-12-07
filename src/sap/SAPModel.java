@@ -1,6 +1,9 @@
 package sap;
 
 public class SAPModel {
+	public enum RegisterType {
+		A, B, ALU, IR, OUT, PC, MAR
+	}
 	private Register regA;
 	private Register regB;
 	private Register regOut;
