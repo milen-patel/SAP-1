@@ -45,6 +45,12 @@ public class SAPModel {
 		this.regOut.clear();
 		this.programCounter.clear();
 		this.regIR.clear();
+		
+		for (SAPObserver o : observers) {
+			o.regAChange(this.regA.getVal());
+			o.regBChange(this.regB.getVal());
+			
+		}
 	}
 	
 	public Memory getRAM() {
@@ -71,6 +77,9 @@ public class SAPModel {
 	}
 	public Register getMAR() {
 		return this.regMAR;
+	}
+	public boolean[] getFlags() {
+		return this.flags;
 	}
 	
 	// Observable Pattern

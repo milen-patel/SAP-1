@@ -50,7 +50,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	public SAPViewWidget(sap.SAPModel model) {
 		// Encapsulate the model
 		this.model = model;
-		
+
 		// Add ourselves as a model observer
 		this.model.addObserver(this);
 
@@ -262,8 +262,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		} else if (t == RegisterType.B) {
 			val = this.model.getB().getVal();
 		} else if (t == RegisterType.ALU) {
-			// TODO: Handle subtraction
-			val = this.model.getALU().ALUOut(false);
+			val = this.model.getALU().ALUOut(this.model.getFlags()[9]);
 		} else if (t == RegisterType.IR) {
 			val = this.model.getIR().getVal();
 		} else if (t == RegisterType.OUT) {
@@ -274,6 +273,67 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			val = this.model.getMAR().getVal();
 		}
 		return "" + (0b1 & (val >> bitPos));
+
+	}
+
+	private void updateALU() {
+		for (int i = 0; i <= 7; i++) {
+			aluBits[i].setText(decodeRegister(RegisterType.ALU, 7 - i));
+		}
+	}
+	@Override
+	public void regAChange(byte newVal) {
+		for (int i = 0; i <= 7; i++) {
+			aBits[i].setText(decodeRegister(RegisterType.A, 7 - i));
+		}
+		updateALU();
+	}
+
+	@Override
+	public void regBChange(byte newVal) {
+		for (int i = 0; i <= 7; i++) {
+			bBits[i].setText(decodeRegister(RegisterType.B, 7 - i));
+		}
+		updateALU();
+	}
+
+	@Override
+	public void pcChange(byte newVal) {
+		for (int i = 0; i <= 3; i++) {
+			pcBits[i].setText(decodeRegister(RegisterType.PC, 3 - i));
+		}
+	}
+
+	@Override
+	public void marChange(byte newVal) {
+		for (int i = 0; i <= 3; i++) {
+			marBits[i].setText(decodeRegister(RegisterType.MAR, 3 - i));
+		}
+	}
+
+	@Override
+	public void outChange(byte newVal) {
+		for (int i = 0; i <= 7; i++) {
+			outBits[i].setText(decodeRegister(RegisterType.OUT, 7-i));
+		}
+	}
+
+	@Override
+	public void irChange(byte newVal) {
+		for (int i = 0; i <= 7; i++) {
+			irBits[i].setText(decodeRegister(RegisterType.IR, 7-i));
+		}
+	}
+
+	@Override
+	public void stepCycleChange(byte newVal) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void flagChange() {
+		// TODO Auto-generated method stub
 
 	}
 
