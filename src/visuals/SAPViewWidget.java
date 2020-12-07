@@ -161,20 +161,21 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.controlBits = new JButton[16];
 		this.controlBits[0] = new JButton("HLT");
 		this.controlBits[1] = new JButton("MI");
-		this.controlBits[2] = new JButton("RO");
-		this.controlBits[3] = new JButton("IO");
-		this.controlBits[4] = new JButton("II");
-		this.controlBits[5] = new JButton("AI");
-		this.controlBits[6] = new JButton("AO");
-		this.controlBits[7] = new JButton("ΣO");
-		this.controlBits[8] = new JButton("SU");
-		this.controlBits[9] = new JButton("BI");
-		this.controlBits[10] = new JButton("OI");
-		this.controlBits[11] = new JButton("CE");
-		this.controlBits[12] = new JButton("CO");
-		this.controlBits[13] = new JButton("J");
-		this.controlBits[14] = new JButton("FI");
-		this.controlBits[15] = new JButton("HLT");
+		this.controlBits[2] = new JButton("RI");
+		this.controlBits[3] = new JButton("RO");
+		this.controlBits[4] = new JButton("IO");
+		this.controlBits[5] = new JButton("II");
+		this.controlBits[6] = new JButton("AI");
+		this.controlBits[7] = new JButton("AO");
+		this.controlBits[8] = new JButton("ΣO");
+		this.controlBits[9] = new JButton("SU");
+		this.controlBits[10] = new JButton("BI");
+		this.controlBits[11] = new JButton("OI");
+		this.controlBits[12] = new JButton("CE");
+		this.controlBits[13] = new JButton("CO");
+		this.controlBits[14] = new JButton("J");
+		this.controlBits[15] = new JButton("FI");
+
 		for (JButton b : controlBits) {
 			b.setPreferredSize(buttonSize);
 		}
