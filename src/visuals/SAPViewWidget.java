@@ -127,9 +127,11 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.add(this.stepCt, c);
 
 		c.gridx = 0;
+		c.gridwidth = 12;
 		c.gridy = 17;
-		this.add(new JLabel("========"), c);
+		this.add(new JLabel("=================================================="), c);
 
+		c.gridwidth = 1;
 		c.gridy = 18;
 		c.gridx = 0;
 		this.label_flags = new JLabel("Flags");
