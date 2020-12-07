@@ -9,4 +9,5 @@ public interface SAPObserver {
 	public void irChange(byte newVal);
 	public void stepCycleChange(byte newVal);
 	public void flagChange();
+	public void busChange(byte newVal);
 }

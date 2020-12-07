@@ -35,6 +35,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JLabel label_MAR;
 	private JLabel label_flags;
 	private JLabel label_stepCount;
+	private JLabel label_bus;
 	private JLabel stepCt;
 
 	private JButton[] aBits;
@@ -45,6 +46,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JButton[] pcBits;
 	private JButton[] marBits;
 	private JButton[] flagBits;
+	private JButton[] busBits;
 
 	private static Dimension buttonSize = new Dimension(20, 20);
 
@@ -67,11 +69,14 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		c.insets = new Insets(10, 10, 10, 0);
 
 		// Add header
-		c.gridx = 3;
-		c.gridwidth = 5;
+		c.gridx = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridy = 0;
-		this.add(new JLabel("SAP Status"), c);
+		this.label_bus = new JLabel("BUS");
+		this.add(this.label_bus, c);
+
+		c.gridy = 1;
+		// this.add(new JLabel("========"), c);
 
 		// Add component labels
 		c.gridwidth = 1;
@@ -177,6 +182,18 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			this.add(this.flagBits[i], c);
 		}
 
+		// Show BUS Value
+		c.gridy = 0;
+		c.gridx = 1;
+		busBits = new JButton[8];
+		for (int i = 0; i <= 7; i++) {
+			c.gridx = i + 1;
+			JButton b = new JButton(decodeRegister(RegisterType.BUS, 7 - i));
+			b.setPreferredSize(buttonSize);
+			this.add(b, c);
+			busBits[i] = b;
+		}
+
 		// Show Register A Values
 		c.gridy = 2;
 		c.gridx = 1;
@@ -255,7 +272,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		marBits = new JButton[4];
 		for (int i = 0; i <= 3; i++) {
 			c.gridx = i + 1;
-			JButton b = new JButton(decodeRegister(RegisterType.PC, 3 - i));
+			JButton b = new JButton(decodeRegister(RegisterType.MAR, 3 - i));
 			b.setPreferredSize(buttonSize);
 			this.add(b, c);
 			marBits[i] = b;
@@ -280,6 +297,8 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			val = this.model.getPC().getVal();
 		} else if (t == RegisterType.MAR) {
 			val = this.model.getMAR().getVal();
+		} else if (t == RegisterType.BUS) {
+			val = this.model.getBus().getVal();
 		}
 		return "" + (0b1 & (val >> bitPos));
 
@@ -337,13 +356,20 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 
 	@Override
 	public void stepCycleChange(byte newVal) {
-		this.stepCt.setText(""+newVal);
+		this.stepCt.setText("" + newVal);
 	}
 
 	@Override
 	public void flagChange() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void busChange(byte newVal) {
+		for (int i = 0; i <= 7; i++) {
+			busBits[i].setText(decodeRegister(RegisterType.BUS, 7 - i));
+		}
 	}
 
 }
