@@ -33,10 +33,11 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JLabel label_out;
 	private JLabel label_PC;
 	private JLabel label_MAR;
-	private JLabel label_flags;
+	private JLabel label_controls;
 	private JLabel label_stepCount;
 	private JLabel label_bus;
 	private JLabel stepCt;
+	private JLabel label_flags;
 
 	private JButton[] aBits;
 	private JButton[] bBits;
@@ -47,6 +48,8 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JButton[] marBits;
 	private JButton[] flagBits;
 	private JButton[] busBits;
+	private JButton cFlag;
+	private JButton zFlag;
 
 	private static Dimension buttonSize = new Dimension(20, 20);
 
@@ -138,6 +141,11 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 
 		c.gridwidth = 1;
 		c.gridy = 18;
+		c.gridx = 0;
+		this.label_controls = new JLabel("Control Lines");
+		this.add(this.label_controls, c);
+		
+		c.gridy = 20;
 		c.gridx = 0;
 		this.label_flags = new JLabel("Flags");
 		this.add(this.label_flags, c);
@@ -277,6 +285,17 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			this.add(b, c);
 			marBits[i] = b;
 		}
+		
+		// Show Flags
+		c.gridy = 20;
+		c.gridx = 1;
+		this.cFlag = new JButton(this.model.getFlags().getCF() ? "C" : "-C");
+		this.cFlag.setPreferredSize(buttonSize);
+		this.add(this.cFlag, c);
+		c.gridx = 2;
+		this.zFlag = new JButton(this.model.getFlags().getZF() ? "Z" : "-Z");
+		this.zFlag.setPreferredSize(buttonSize);
+		this.add(this.zFlag, c);
 
 		repaint();
 	}
@@ -288,7 +307,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		} else if (t == RegisterType.B) {
 			val = this.model.getB().getVal();
 		} else if (t == RegisterType.ALU) {
-			val = this.model.getALU().ALUOut(this.model.getFlags()[9]);
+			val = this.model.getALU().ALUOut(this.model.getControlLines()[9]);
 		} else if (t == RegisterType.IR) {
 			val = this.model.getIR().getVal();
 		} else if (t == RegisterType.OUT) {
@@ -362,7 +381,9 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	@Override
 	public void flagChange() {
 		// TODO Auto-generated method stub
-
+		
+		this.zFlag.setText(this.model.getFlags().getZF() ? "Z" : "-Z");
+		this.cFlag.setText(this.model.getFlags().getCF() ? "C" : "-C");
 	}
 
 	@Override

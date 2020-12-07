@@ -46,7 +46,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		}
 
 		/* Set our preferred size */
-		this.setPreferredSize(new Dimension(220, 520));
+		this.setPreferredSize(new Dimension(220, 550));
 		this.setBackground(Color.LIGHT_GRAY);
 
 		/* Set the Layout */

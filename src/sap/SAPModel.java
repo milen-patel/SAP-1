@@ -19,7 +19,9 @@ public class SAPModel implements ClockObserver {
 	private Memory RAM;
 	private EventLog log;
 	private ALU adder;
-	private boolean[] flags;
+	private boolean[] controlLines;
+	private RegisterFlags regFlags;
+	
 	private List<SAPObserver> observers;
 
 	public SAPModel() {
@@ -33,9 +35,10 @@ public class SAPModel implements ClockObserver {
 		this.RAM = new Memory();
 		this.log = EventLog.getEventLog();
 		this.adder = new ALU(this.regA, this.regB);
-		this.flags = new boolean[16];
+		this.controlLines = new boolean[16];
 		this.observers = new ArrayList<SAPObserver>();
 		this.bus = new Register8Bit();
+		this.regFlags = new RegisterFlags();
 
 		// For testing purposes only
 		this.regA.loadVal((byte) 16);
@@ -59,6 +62,7 @@ public class SAPModel implements ClockObserver {
 		this.regMAR.clear();
 		this.bus.clear();
 		this.stepCount = 0;
+		this.regFlags.clear();
 
 		// Reset clock iff high
 		if (Clock.getClock().getStatus()) {
@@ -74,6 +78,7 @@ public class SAPModel implements ClockObserver {
 			o.stepCycleChange(this.stepCount);
 			o.marChange(this.regMAR.getVal());
 			o.busChange(this.bus.getVal());
+			o.flagChange();
 		}
 	}
 
@@ -109,8 +114,8 @@ public class SAPModel implements ClockObserver {
 		return this.regMAR;
 	}
 
-	public boolean[] getFlags() {
-		return this.flags;
+	public boolean[] getControlLines() {
+		return this.controlLines;
 	}
 
 	public byte getStepCount() {
@@ -118,6 +123,9 @@ public class SAPModel implements ClockObserver {
 	}
 	public Register getBus() {
 		return this.bus;
+	}
+	public RegisterFlags getFlags() {
+		return this.regFlags;
 	}
 
 	// Observable Pattern
@@ -147,6 +155,7 @@ public class SAPModel implements ClockObserver {
 			for (SAPObserver o : observers) {
 				o.stepCycleChange(this.stepCount);
 			}
+			EventLog.getEventLog().addEntry("Step counter updated to " + this.stepCount);
 		} else {
 			// Rising edge detected
 			if (this.stepCount == 1) {
