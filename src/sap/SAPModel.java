@@ -1,24 +1,32 @@
 package sap;
 
 public class SAPModel {
-	Register regA;
-	Register regB;
-	Register regOut;
-	Register regIR;
-	PC programCounter;
-	int stepCount;
-	Memory RAM;
-	EventLog log;
+	private Register regA;
+	private Register regB;
+	private Register regOut;
+	private Register regIR;
+	private Register regMAR;
+	private PC programCounter;
+	private int stepCount;
+	private Memory RAM;
+	private EventLog log;
+	private ALU adder;
 
 	public SAPModel() {
 		this.regA = new Register8Bit();
 		this.regB = new Register8Bit();
 		this.regOut = new Register8Bit();
 		this.regIR = new Register8Bit();
+		this.regMAR = new Register4Bit();
 		this.programCounter = new PC();
 		this.stepCount = 0;
 		this.RAM = new Memory();
 		this.log = EventLog.getEventLog();
+		this.adder = new ALU(this.regA, this.regB);
+		
+		// For testing purposes only
+		this.regA.loadVal((byte) 16);
+		this.regB.loadVal((byte) 17);
 	}
 	
 	public void reset() {
@@ -32,6 +40,28 @@ public class SAPModel {
 	
 	public Memory getRAM() {
 		return this.RAM;
+	}
+	
+	public Register getA() {
+		return this.regA;
+	}
+	public Register getB() {
+		return this.regB;
+	}
+	public ALU getALU() {
+		return this.adder;
+	}
+	public Register getIR() {
+		return this.regIR;
+	}
+	public Register getOut() {
+		return this.regOut;
+	}
+	public PC getPC() {
+		return this.programCounter;
+	}
+	public Register getMAR() {
+		return this.regMAR;
 	}
 	
 

@@ -16,12 +16,11 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	private GridBagConstraints c;
 	private JButton[][] butts;
 	private static Dimension buttonSize = new Dimension(20, 20);
-	private static Color COLOR_ON = new Color(124,248,42);
-	private static Color COLOR_OFF = new Color(34,82,20);
+	private static Color COLOR_ON = new Color(124, 248, 42);
+	private static Color COLOR_OFF = new Color(34, 82, 20);
 
 	/*
-	 * Address: [0, 15] 
-	 * bitPos: [0, 7]
+	 * Address: [0, 15] bitPos: [0, 7]
 	 */
 	private int lookupRAM(int address, int bitPos) {
 		int val = 0b11111111 & this.model.getRAM().getRAM()[address];
@@ -41,24 +40,26 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 				this.butts[i][j].setActionCommand(i + "," + j);
 				this.butts[i][j].addActionListener(this);
 				this.butts[i][j].setBorder(null);
-				this.butts[i][j].setBackground(butts[i][j].getText().equals("1") ? COLOR_ON : COLOR_OFF );
+				this.butts[i][j].setBackground(butts[i][j].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 				this.butts[i][j].setOpaque(true);
 			}
 		}
 
 		/* Set our preferred size */
-		this.setPreferredSize(new Dimension(350, 500));
-		this.setBackground(Color.PINK);
+		this.setPreferredSize(new Dimension(220, 520));
+		this.setBackground(Color.LIGHT_GRAY);
 
 		/* Set the Layout */
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-
-		c.gridx = 0;
+		c.gridx = 3;
+		c.gridheight = 1;
+		c.gridwidth = 7;
 		c.gridy = 0;
 		this.add(new JLabel("Memory Content"), c);
-
+		c.gridx = 4;
+		c.gridwidth = 1;
 		for (int i = 1; i <= 16; i++) {
 			c.gridx = 1;
 			c.gridy = i;
@@ -104,7 +105,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	public void valChanged(int address) {
 		for (int i = 0; i <= 7; i++) {
 			this.butts[address][i].setText("" + lookupRAM(address, 7 - i));
-			this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF );
+			this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 			this.butts[address][i].setBorder(null);
 		}
 	}
@@ -124,16 +125,18 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		byte memVal = this.model.getRAM().getRAM()[address];
 
 		// Determine if we need to subtract or add
+		byte newVal;
 		if (currVal == 1) {
 			// Subtract
-			byte newVal = (byte) (memVal - Math.pow(2, bitPos));
-			this.model.getRAM().manualValueChange(address, newVal);
+			newVal = (byte) (memVal - Math.pow(2, bitPos));
 		} else {
 			// Add
-			byte newVal = (byte) (memVal + Math.pow(2, bitPos));
-			this.model.getRAM().manualValueChange(address, newVal);
-
+			newVal = (byte) (memVal + Math.pow(2, bitPos));
 		}
+		this.model.getRAM().manualValueChange(address, newVal);
+
+		// Inform the log
+		sap.EventLog.getEventLog().addEntry("Memory address " + address + " changed to " + newVal);
 
 	}
 

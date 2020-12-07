@@ -31,23 +31,21 @@ public class View extends JPanel implements sap.LogObserver, ActionListener {
 		/* Set the Layout */
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.CENTER;
+		c.fill = GridBagConstraints.VERTICAL;
 		this.setPreferredSize(new Dimension(1000, 1000));
 
 		this.viewWidget = new SAPViewWidget(this.model);
-		c.gridx = 0;
+		c.gridx = 1;
 		c.gridy = 0;
 		c.gridheight = 6;
+
 		this.add(viewWidget, c);
 
 		this.ramWidget = new RAMViewWidget(this.model);
-		// Add some padding
-		c.gridx = 1;
+		c.gridx = 0;
 		this.add(ramWidget, c);
 
 		welcome_label = new JLabel("Welcome!");
-		welcome_label.setForeground(Color.BLUE);
-		welcome_label.setBackground(Color.YELLOW);
 
 		c.gridx = 3;
 		c.gridy = 0;
@@ -63,13 +61,15 @@ public class View extends JPanel implements sap.LogObserver, ActionListener {
 		c.gridheight = 1;
 		this.add(resetButton, c);
 
-		logLabel = new JTextArea("SAP Event Log\n===============\n");
+		logLabel = new JTextArea(1, 1);
 		logLabel.setEditable(false);
 		c.gridx = 3;
 		c.gridy = 2;
-		c.ipadx = 150;
+		c.ipadx = 220;
 		c.ipady = 350;
 		c.gridheight = 7;
+		c.fill = GridBagConstraints.VERTICAL;
+
 		this.add(new JScrollPane(logLabel), c);
 
 		// Add the view as a log observer
