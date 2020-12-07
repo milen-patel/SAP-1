@@ -51,6 +51,7 @@ public class SAPModel {
 		this.regIR.clear();
 		this.regMAR.clear();
 		this.stepCount = 0;
+		Clock.getClock().toggleClock();
 		
 		for (SAPObserver o : observers) {
 			o.regAChange(this.regA.getVal());

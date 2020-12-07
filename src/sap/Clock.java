@@ -22,6 +22,14 @@ public class Clock {
 	public void toggleClock() {
 		getClock();
 		this.status = !this.status;
+		notifyObservers();
+		
+		// Add to event log
+		if (status) {
+			EventLog.getEventLog().addEntry("Rising Edge of Clock");
+		} else {
+			EventLog.getEventLog().addEntry("Falling Edge of Clock");
+		}
 		return;
 	}
 

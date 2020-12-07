@@ -15,7 +15,7 @@ import javax.swing.*;
 
 import sap.SAPModel;
 
-public class View extends JPanel implements sap.LogObserver, ActionListener {
+public class View extends JPanel implements sap.LogObserver, ActionListener, sap.ClockObserver {
 
 	private SAPModel model;
 	private JLabel welcome_label;
@@ -45,7 +45,7 @@ public class View extends JPanel implements sap.LogObserver, ActionListener {
 		c.gridx = 0;
 		this.add(ramWidget, c);
 
-		welcome_label = new JLabel("Welcome!");
+		welcome_label = new JLabel("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));
 
 		c.gridx = 3;
 		c.gridy = 0;
@@ -74,6 +74,8 @@ public class View extends JPanel implements sap.LogObserver, ActionListener {
 
 		// Add the view as a log observer
 		sap.EventLog.getEventLog().addObserver(this);
+		// Add the view as a clock observer
+		sap.Clock.getClock().addObserver(this);
 	}
 
 	// Implement log observer method
@@ -87,6 +89,11 @@ public class View extends JPanel implements sap.LogObserver, ActionListener {
 		if (e.getActionCommand().equals("resetButtonClicked")) {
 			this.model.reset();
 		}
+	}
+
+	@Override
+	public void clockChange() {
+		this.welcome_label.setText("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));
 	}
 
 }
