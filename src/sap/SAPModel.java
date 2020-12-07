@@ -87,6 +87,9 @@ public class SAPModel {
 	public boolean[] getFlags() {
 		return this.flags;
 	}
+	public byte getStepCount() {
+		return this.stepCount;
+	}
 	
 	// Observable Pattern
 	public void addObserver(SAPObserver o) {

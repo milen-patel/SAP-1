@@ -35,6 +35,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JLabel label_MAR;
 	private JLabel label_flags;
 	private JLabel label_stepCount;
+	private JLabel stepCt;
 
 	private JButton[] aBits;
 	private JButton[] bBits;
@@ -120,6 +121,12 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.label_stepCount = new JLabel("Step Count");
 		this.add(this.label_stepCount, c);
 
+		c.gridy = 16;
+		c.gridx = 1;
+		this.stepCt = new JLabel("" + this.model.getStepCount());
+		this.add(this.stepCt, c);
+
+		c.gridx = 0;
 		c.gridy = 17;
 		this.add(new JLabel("========"), c);
 
@@ -281,6 +288,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			aluBits[i].setText(decodeRegister(RegisterType.ALU, 7 - i));
 		}
 	}
+
 	@Override
 	public void regAChange(byte newVal) {
 		for (int i = 0; i <= 7; i++) {
@@ -314,21 +322,20 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	@Override
 	public void outChange(byte newVal) {
 		for (int i = 0; i <= 7; i++) {
-			outBits[i].setText(decodeRegister(RegisterType.OUT, 7-i));
+			outBits[i].setText(decodeRegister(RegisterType.OUT, 7 - i));
 		}
 	}
 
 	@Override
 	public void irChange(byte newVal) {
 		for (int i = 0; i <= 7; i++) {
-			irBits[i].setText(decodeRegister(RegisterType.IR, 7-i));
+			irBits[i].setText(decodeRegister(RegisterType.IR, 7 - i));
 		}
 	}
 
 	@Override
 	public void stepCycleChange(byte newVal) {
-		// TODO Auto-generated method stub
-
+		this.stepCt.setText(""+newVal);
 	}
 
 	@Override
