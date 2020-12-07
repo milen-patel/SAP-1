@@ -241,7 +241,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		pcBits = new JButton[4];
 		for (int i = 0; i <= 3; i++) {
 			c.gridx = i + 1;
-			JButton b = new JButton(decodeRegister(RegisterType.PC, 7 - i));
+			JButton b = new JButton(decodeRegister(RegisterType.PC, 3 - i));
 			b.setPreferredSize(buttonSize);
 			this.add(b, c);
 			pcBits[i] = b;
@@ -253,7 +253,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		marBits = new JButton[4];
 		for (int i = 0; i <= 3; i++) {
 			c.gridx = i + 1;
-			JButton b = new JButton(decodeRegister(RegisterType.PC, 7 - i));
+			JButton b = new JButton(decodeRegister(RegisterType.PC, 3 - i));
 			b.setPreferredSize(buttonSize);
 			this.add(b, c);
 			marBits[i] = b;

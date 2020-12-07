@@ -36,6 +36,10 @@ public class SAPModel {
 		// For testing purposes only
 		this.regA.loadVal((byte) 16);
 		this.regB.loadVal((byte) 17);
+		this.regIR.loadVal((byte) 32);
+		this.programCounter.loadVal((byte) 15);
+		this.regOut.loadVal((byte) 64);
+		this.regMAR.loadVal((byte) 14);
 	}
 	
 	public void reset() {
