@@ -22,6 +22,7 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 	private GridBagConstraints c;
 	private JTextArea logLabel;
 	private JButton resetButton;
+	private JButton clockButton;
 	private SAPViewWidget viewWidget;
 	private RAMViewWidget ramWidget;
 
@@ -61,10 +62,18 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 		c.gridheight = 1;
 		this.add(resetButton, c);
 
+		c.gridx = 3;
+		c.gridy = 2;
+		c.gridheight = 1;
+		this.clockButton = new JButton("Toggle Clock");
+		this.clockButton.addActionListener(this);
+		this.clockButton.setActionCommand("clockButton");
+		this.add(clockButton, c);
+		
 		logLabel = new JTextArea(1, 1);
 		logLabel.setEditable(false);
 		c.gridx = 3;
-		c.gridy = 2;
+		c.gridy = 3;
 		c.ipadx = 220;
 		c.ipady = 350;
 		c.gridheight = 7;
@@ -88,6 +97,8 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("resetButtonClicked")) {
 			this.model.reset();
+		} else if (e.getActionCommand().contentEquals("clockButton")) {
+			sap.Clock.getClock().toggleClock();
 		}
 	}
 
