@@ -12,7 +12,7 @@ public class SAPModel {
 	private Register regIR;
 	private Register regMAR;
 	private PC programCounter;
-	private int stepCount;
+	private byte stepCount;
 	private Memory RAM;
 	private EventLog log;
 	private ALU adder;
@@ -45,11 +45,17 @@ public class SAPModel {
 		this.regOut.clear();
 		this.programCounter.clear();
 		this.regIR.clear();
+		this.regMAR.clear();
+		this.stepCount = 0;
 		
 		for (SAPObserver o : observers) {
 			o.regAChange(this.regA.getVal());
 			o.regBChange(this.regB.getVal());
-			
+			o.outChange(this.regOut.getVal());
+			o.pcChange(this.programCounter.getVal());
+			o.irChange(this.regIR.getVal());
+			o.stepCycleChange(this.stepCount);
+			o.marChange(this.regMAR.getVal());
 		}
 	}
 	
