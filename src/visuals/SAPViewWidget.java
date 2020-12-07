@@ -46,12 +46,14 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JButton[] outBits;
 	private JButton[] pcBits;
 	private JButton[] marBits;
-	private JButton[] flagBits;
+	private JButton[] controlBits;
 	private JButton[] busBits;
 	private JButton cFlag;
 	private JButton zFlag;
 
 	private static Dimension buttonSize = new Dimension(20, 20);
+	private static Color defaultButtonBackground = new Color(238, 238, 238);
+	private static Color selectedButtonBackground = new Color(55, 55, 55);
 
 	public SAPViewWidget(sap.SAPModel model) {
 		// Encapsulate the model
@@ -144,7 +146,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		c.gridx = 0;
 		this.label_controls = new JLabel("Control Lines");
 		this.add(this.label_controls, c);
-		
+
 		c.gridy = 20;
 		c.gridx = 0;
 		this.label_flags = new JLabel("Flags");
@@ -156,29 +158,32 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		c.insets = new Insets(0, 0, 0, 0);
 
 		// Display Flags
-		this.flagBits = new JButton[16];
-		this.flagBits[0] = new JButton("HLT");
-		this.flagBits[1] = new JButton("MI");
-		this.flagBits[2] = new JButton("RO");
-		this.flagBits[3] = new JButton("IO");
-		this.flagBits[4] = new JButton("II");
-		this.flagBits[5] = new JButton("AI");
-		this.flagBits[6] = new JButton("AO");
-		this.flagBits[7] = new JButton("ΣO");
-		this.flagBits[8] = new JButton("SU");
-		this.flagBits[9] = new JButton("BI");
-		this.flagBits[10] = new JButton("OI");
-		this.flagBits[11] = new JButton("CE");
-		this.flagBits[12] = new JButton("CO");
-		this.flagBits[13] = new JButton("J");
-		this.flagBits[14] = new JButton("FI");
-		this.flagBits[15] = new JButton("HLT");
-		for (JButton b : flagBits) {
+		this.controlBits = new JButton[16];
+		this.controlBits[0] = new JButton("HLT");
+		this.controlBits[1] = new JButton("MI");
+		this.controlBits[2] = new JButton("RO");
+		this.controlBits[3] = new JButton("IO");
+		this.controlBits[4] = new JButton("II");
+		this.controlBits[5] = new JButton("AI");
+		this.controlBits[6] = new JButton("AO");
+		this.controlBits[7] = new JButton("ΣO");
+		this.controlBits[8] = new JButton("SU");
+		this.controlBits[9] = new JButton("BI");
+		this.controlBits[10] = new JButton("OI");
+		this.controlBits[11] = new JButton("CE");
+		this.controlBits[12] = new JButton("CO");
+		this.controlBits[13] = new JButton("J");
+		this.controlBits[14] = new JButton("FI");
+		this.controlBits[15] = new JButton("HLT");
+		for (JButton b : controlBits) {
 			b.setPreferredSize(buttonSize);
 		}
 
 		c.gridy = 18;
 		for (int i = 0; i < 16; i++) {
+			controlBits[i].setBorder(null);
+			controlBits[i].setBackground(defaultButtonBackground);
+			controlBits[i].setOpaque(true);
 			if (i == 8) {
 				c.gridy++;
 				c.gridx = 1;
@@ -187,7 +192,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			} else {
 				c.gridx = i + 1;
 			}
-			this.add(this.flagBits[i], c);
+			this.add(this.controlBits[i], c);
 		}
 
 		// Show BUS Value
@@ -285,7 +290,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			this.add(b, c);
 			marBits[i] = b;
 		}
-		
+
 		// Show Flags
 		c.gridy = 20;
 		c.gridx = 1;
@@ -296,7 +301,8 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.zFlag = new JButton(this.model.getFlags().getZF() ? "Z" : "-Z");
 		this.zFlag.setPreferredSize(buttonSize);
 		this.add(this.zFlag, c);
-
+		// TODO del
+		this.controlLineChange();
 		repaint();
 	}
 
@@ -381,7 +387,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	@Override
 	public void flagChange() {
 		// TODO Auto-generated method stub
-		
+
 		this.zFlag.setText(this.model.getFlags().getZF() ? "Z" : "-Z");
 		this.cFlag.setText(this.model.getFlags().getCF() ? "C" : "-C");
 	}
@@ -390,6 +396,18 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	public void busChange(byte newVal) {
 		for (int i = 0; i <= 7; i++) {
 			busBits[i].setText(decodeRegister(RegisterType.BUS, 7 - i));
+		}
+	}
+
+	@Override
+	public void controlLineChange() {
+		boolean[] newLines = this.model.getControlLines();
+		for (int i = 0; i < newLines.length; i++) {
+			if (newLines[i]) {
+				this.controlBits[i].setBackground(selectedButtonBackground);
+			} else {
+				this.controlBits[i].setBackground(defaultButtonBackground);
+			}
 		}
 	}
 

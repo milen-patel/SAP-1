@@ -21,7 +21,7 @@ public class SAPModel implements ClockObserver {
 	private ALU adder;
 	private boolean[] controlLines;
 	private RegisterFlags regFlags;
-	
+
 	private List<SAPObserver> observers;
 
 	public SAPModel() {
@@ -121,9 +121,11 @@ public class SAPModel implements ClockObserver {
 	public byte getStepCount() {
 		return this.stepCount;
 	}
+
 	public Register getBus() {
 		return this.bus;
 	}
+
 	public RegisterFlags getFlags() {
 		return this.regFlags;
 	}
@@ -141,6 +143,12 @@ public class SAPModel implements ClockObserver {
 			return;
 		}
 		this.observers.remove(o);
+	}
+
+	public void notifyFlagChange() {
+		for (SAPObserver o : observers) {
+			o.controlLineChange();
+		}
 	}
 
 	@Override
