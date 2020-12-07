@@ -1,4 +1,6 @@
 package sap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SAPModel {
 	public enum RegisterType {
@@ -14,6 +16,8 @@ public class SAPModel {
 	private Memory RAM;
 	private EventLog log;
 	private ALU adder;
+	private boolean[] flags;
+	private List<SAPObserver> observers;
 
 	public SAPModel() {
 		this.regA = new Register8Bit();
@@ -26,6 +30,8 @@ public class SAPModel {
 		this.RAM = new Memory();
 		this.log = EventLog.getEventLog();
 		this.adder = new ALU(this.regA, this.regB);
+		this.flags = new boolean[16];
+		this.observers = new ArrayList<SAPObserver>();
 		
 		// For testing purposes only
 		this.regA.loadVal((byte) 16);
@@ -65,6 +71,21 @@ public class SAPModel {
 	}
 	public Register getMAR() {
 		return this.regMAR;
+	}
+	
+	// Observable Pattern
+	public void addObserver(SAPObserver o) {
+		if (o == null ) {
+			return;
+		}
+		this.observers.add(o);
+	}
+	
+	public void removeObserver(SAPObserver o) {
+		if (o == null) {
+			return;
+		}
+		this.observers.remove(o);
 	}
 	
 

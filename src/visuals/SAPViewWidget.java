@@ -20,8 +20,9 @@ import javax.swing.*;
 
 import sap.SAPModel;
 import sap.SAPModel.RegisterType;
+import sap.SAPObserver;
 
-public class SAPViewWidget extends JPanel {
+public class SAPViewWidget extends JPanel implements SAPObserver {
 	private sap.SAPModel model;
 	private GridBagConstraints c;
 
@@ -47,7 +48,11 @@ public class SAPViewWidget extends JPanel {
 	private static Dimension buttonSize = new Dimension(20, 20);
 
 	public SAPViewWidget(sap.SAPModel model) {
+		// Encapsulate the model
 		this.model = model;
+		
+		// Add ourselves as a model observer
+		this.model.addObserver(this);
 
 		// Set our preferred size
 		this.setPreferredSize(new Dimension(525, 500));
