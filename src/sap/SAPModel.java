@@ -2,7 +2,7 @@ package sap;
 import java.util.List;
 import java.util.ArrayList;
 
-public class SAPModel {
+public class SAPModel implements ClockObserver {
 	public enum RegisterType {
 		A, B, ALU, IR, OUT, PC, MAR
 	}
@@ -40,6 +40,9 @@ public class SAPModel {
 		this.programCounter.loadVal((byte) 15);
 		this.regOut.loadVal((byte) 64);
 		this.regMAR.loadVal((byte) 14);
+		
+		// Make the model a clock observer
+		Clock.getClock().addObserver(this);
 	}
 	
 	public void reset() {
@@ -113,6 +116,22 @@ public class SAPModel {
 			return;
 		}
 		this.observers.remove(o);
+	}
+
+	@Override
+	public void clockChange() {
+		// If clock just fell, increment step count
+		if (Clock.getClock().getStatus()) {
+			return;
+		}
+		if (this.stepCount == 5) {
+			this.stepCount = 0;
+		} else {
+			this.stepCount++;
+		}
+		for (SAPObserver o : observers) {
+			o.stepCycleChange(this.stepCount);
+		}
 	}
 	
 
