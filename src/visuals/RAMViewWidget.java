@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import sap.EventLog;
+
 public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionListener {
 	private sap.SAPModel model;
 	private GridBagConstraints c;
@@ -63,6 +65,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		c.gridwidth = 9;
 		this.clearMemButton = new JButton("Clear all Memory");
 		this.clearMemButton.setActionCommand("clearmem");
+		this.clearMemButton.addActionListener(this);
 		this.add(this.clearMemButton, c);
 
 		c.gridx = 1;
@@ -70,6 +73,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		c.gridwidth = 9;
 		this.showOpcodeButton = new JButton("Show OPCodes");
 		this.showOpcodeButton.setActionCommand("showopcodes");
+		this.showOpcodeButton.addActionListener(this);
 		this.add(this.showOpcodeButton, c);
 
 		c.gridx = 1;
@@ -77,6 +81,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		c.gridwidth = 9;
 		this.countingProgramButton = new JButton("Load Counting Program");
 		this.countingProgramButton.setActionCommand("loadcountprogram");
+		this.countingProgramButton.addActionListener(this);
 		this.add(this.countingProgramButton, c);
 
 		// Reset constraint parameters
@@ -145,12 +150,60 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().contentEquals("clearmem")) {
+			byte[] arr = this.model.getRAM().getRAM();
+			for (int i = 0; i < 16; i++) {
+				// Set the value to 0
+				arr[i] = 0;
+				// Tell the display to repaint
+				this.valChanged(i);
+
+			}
 			return;
 		}
 		if (e.getActionCommand().contentEquals("showopcodes")) {
+			EventLog.getEventLog().addEntry("=============");
+			EventLog.getEventLog().addEntry("NOP\t0000");
+			EventLog.getEventLog().addEntry("LDA\t0001");
+			EventLog.getEventLog().addEntry("ADD\t0010");
+			EventLog.getEventLog().addEntry("SUB\t0011");
+			EventLog.getEventLog().addEntry("STA\t0100");
+			EventLog.getEventLog().addEntry("LDI\t0101");
+			EventLog.getEventLog().addEntry("JMP\t0110");
+			EventLog.getEventLog().addEntry("JC\t0111");
+			EventLog.getEventLog().addEntry("JZ\t1000");
+			EventLog.getEventLog().addEntry("OUT\t1110");
+			EventLog.getEventLog().addEntry("HLT\t1111");
+			EventLog.getEventLog().addEntry("=============");
 			return;
 		}
 		if (e.getActionCommand().contentEquals("loadcountprogram")) {
+			// Grab internal representation of RAM
+			byte[] arr = this.model.getRAM().getRAM();
+		
+			// First clear the memory content
+			for (int i = 0; i < 16; i++) {
+				// Set the value to 0
+				arr[i] = 0;
+				// Tell the display to repaint
+				this.valChanged(i);
+
+			}
+			
+			// Add updated memory content for this program
+			arr[0] = 0b01010001;
+			this.valChanged(0);
+			arr[1] = 0b00101110;
+			this.valChanged(1);
+			arr[2] = (byte) 0b11100000;
+			this.valChanged(2);
+			arr[3] = 0b01001010;
+			this.valChanged(3);
+			arr[4] = 0b01100001;
+			this.valChanged(4);
+			arr[14] = 0b00000001;
+			this.valChanged(14);
+			
+		
 			return;
 		}
 		// Parse the memory address

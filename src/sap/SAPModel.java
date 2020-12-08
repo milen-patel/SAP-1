@@ -303,7 +303,7 @@ public class SAPModel implements ClockObserver {
 
 				// Figure out what instruction we are executing
 				InstructionTypes currIns = this.decodeIR();
-				System.out.println(currIns);
+				//System.out.println(currIns);
 
 				if (currIns == InstructionTypes.NOP) {
 					if (this.stepCount == 3) {

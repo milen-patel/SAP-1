@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.io.IOException;
@@ -84,6 +85,8 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 		this.playButton.addActionListener(this);
 		this.add(playButton, c);
 
+		// Add gap to the left of the log
+		c.insets = new Insets(0,6,0,0);
 		logLabel = new JTextArea(1, 1);
 		logLabel.setEditable(false);
 		c.gridx = 3;
