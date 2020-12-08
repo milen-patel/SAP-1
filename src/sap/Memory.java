@@ -15,8 +15,17 @@ public class Memory {
 		
 		// Load garbage values into memory
 		for (int i = 0; i < 16; i++) {
-			this.data[i] = (byte) ThreadLocalRandom.current().nextInt(0, 254);
+			//this.data[i] = (byte) ThreadLocalRandom.current().nextInt(0, 254);
+			this.data[i] = 0;
 		}
+		
+		//TODO delete this
+		this.data[0] = 0b01010001;
+		this.data[1] = 0b00101110;
+		this.data[2] = (byte) 0b11100000;
+		this.data[3] = 0b01001010;
+		this.data[4] = 0b01100001;
+		this.data[14] = 0b00000001;
 	}
 	
 	public void memoryIn(byte val) {
@@ -30,7 +39,6 @@ public class Memory {
 	}
 	
 	public int memoryOut() {
-		EventLog.getEventLog().addEntry("TMP: " + this.MAR.getVal());
 		return this.data[(int) this.MAR.getVal()];
 	}
 	

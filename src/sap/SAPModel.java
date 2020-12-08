@@ -25,6 +25,10 @@ public class SAPModel implements ClockObserver {
 		A, B, ALU, IR, OUT, PC, MAR, BUS
 	}
 
+	public enum InstructionTypes {
+		NOP, LDA, ADD, SUB, STA, LDI, JMP, JC, JZ, OUT, HLT, INVALID
+	}
+
 	private Register regA;
 	private Register regB;
 	private Register regOut;
@@ -233,30 +237,65 @@ public class SAPModel implements ClockObserver {
 		Clock.getClock().setIsHalted(false);
 	}
 
+	private InstructionTypes decodeIR() {
+		// Get the value stored in the instruction register
+		byte instructionVal = this.regIR.getVal();
+		System.out.println("Before: "+ Integer.toBinaryString(instructionVal));
+		// Discard the four least significant bits
+		instructionVal = (byte) (instructionVal & 0b11110000);
+		System.out.println("After: "+ Integer.toBinaryString(instructionVal));
+
+		// Analyze the value
+		switch (instructionVal) {
+		case 0b00000000:
+			return InstructionTypes.NOP;
+		case 0b00010000:
+			return InstructionTypes.LDA;
+		case 0b00100000:
+			return InstructionTypes.ADD;
+		case 0b00110000:
+			return InstructionTypes.SUB;
+		case 0b01000000:
+			return InstructionTypes.STA;
+		case 0b01010000:
+			return InstructionTypes.LDI;
+		case 0b01100000:
+			return InstructionTypes.JMP;
+		case 0b01110000:
+			return InstructionTypes.JC;
+		case (byte) 0b10000000:
+			return InstructionTypes.JZ;
+		case (byte) 0b11100000:
+			return InstructionTypes.OUT;
+		case (byte) 0b11110000:
+			return InstructionTypes.HLT;
+		default:
+			return InstructionTypes.INVALID;
+		}
+	}
+
 	@Override
 	public void clockChange() {
 		// If clock just fell, increment step count
 		if (!Clock.getClock().getStatus()) {
-			if (this.stepCount == 4) {
-				this.stepCount = 0;
+			if (this.stepCount == 5) {
+				this.stepCount = 1;
 			} else {
 				this.stepCount++;
 			}
 			this.notifyStepCounterChange();
 			EventLog.getEventLog().addEntry("Step counter updated to " + this.stepCount);
 
-			// If we are on cycle 1, set lines manually
 			if (this.stepCount == 1) {
+				// If we are on cycle 1, set lines manually
 				this.resetAllControlLines();
 				this.controlLines[CO] = true;
 				this.controlLines[MI] = true;
 				notifyControlLineChange();
 				EventLog.getEventLog()
 						.addEntry("Falling edge of cycle 1. The following control lines were set: CO, MI");
-			}
-
-			// If we are on cycle 2, set lines manually
-			if (this.stepCount == 2) {
+			} else if (this.stepCount == 2) {
+				// If we are on cycle 2, set lines manually
 				this.resetAllControlLines();
 				this.controlLines[CE] = true;
 				this.controlLines[RO] = true;
@@ -264,9 +303,257 @@ public class SAPModel implements ClockObserver {
 				notifyControlLineChange();
 				EventLog.getEventLog()
 						.addEntry("Falling edge of cycle 2. The following control lines were set: CE, RO, II");
-			}
+			} else {
 
-			// temp
+				// Figure out what instruction we are executing
+				InstructionTypes currIns = this.decodeIR();
+				System.out.println(currIns);
+
+				if (currIns == InstructionTypes.NOP) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. NOP => No control lines");
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. NOP => No control lines");
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. NOP => No control lines");
+
+					}
+				}
+
+				if (currIns == InstructionTypes.LDA) {
+					if (this.stepCount == 3) {
+						System.out.println("made it ");
+						this.resetAllControlLines();
+						this.controlLines[IO] = true;
+						this.controlLines[MI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						this.controlLines[RO] = true;
+						this.controlLines[AI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+
+				if (currIns == InstructionTypes.ADD) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						this.controlLines[IO] = true;
+						this.controlLines[MI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						this.controlLines[RO] = true;
+						this.controlLines[BI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						this.controlLines[SO] = true;
+						this.controlLines[FI] = true;
+						this.controlLines[AI] = true;
+						notifyControlLineChange();
+
+					}
+				}
+
+				if (currIns == InstructionTypes.SUB) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						this.controlLines[IO] = true;
+						this.controlLines[MI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						this.controlLines[RO] = true;
+						this.controlLines[BI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						this.controlLines[SU] = true;
+						this.controlLines[SO] = true;
+						this.controlLines[FI] = true;
+						this.controlLines[AI] = true;
+						notifyControlLineChange();
+
+					}
+				}
+
+				if (currIns == InstructionTypes.STA) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						this.controlLines[IO] = true;
+						this.controlLines[MI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						this.controlLines[AO] = true;
+						this.controlLines[RI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+
+				if (currIns == InstructionTypes.LDI) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						this.controlLines[IO] = true;
+						this.controlLines[AI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+
+				if (currIns == InstructionTypes.JMP) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						this.controlLines[IO] = true;
+						this.controlLines[J] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+				if (currIns == InstructionTypes.JC) { // TODO
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+				if (currIns == InstructionTypes.JZ) { // TODO
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+				if (currIns == InstructionTypes.OUT) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						this.controlLines[AO] = true;
+						this.controlLines[OI] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+				if (currIns == InstructionTypes.HLT) {
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						this.controlLines[HLT] = true;
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) { // TODO delete these and clean other instructions
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+				if (currIns == InstructionTypes.INVALID) { // TODO
+					if (this.stepCount == 3) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 4) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+					if (this.stepCount == 5) {
+						this.resetAllControlLines();
+						notifyControlLineChange();
+
+					}
+				}
+			}
 			// todo, all out flags should go
 			if (this.controlLines[CO]) {
 				this.bus.loadVal(this.programCounter.getVal());
@@ -277,7 +564,8 @@ public class SAPModel implements ClockObserver {
 				this.notifyBusChange();
 			}
 			if (this.controlLines[IO]) {
-				this.bus.loadVal(this.regIR.getVal());
+				// Instruction register puts 4 least significant bits onto bus
+				this.bus.loadVal((byte) (0b00001111 & this.regIR.getVal()));
 				this.notifyBusChange();
 			}
 			if (this.controlLines[AO]) {
@@ -289,10 +577,7 @@ public class SAPModel implements ClockObserver {
 				this.notifyBusChange(); // TODO make sure this wont be problematic
 			}
 			// todo bus is empty when an out flag goes off
-			if (this.stepCount >= 3) {
-				this.resetAllControlLines();
-				notifyControlLineChange();	
-			}
+	
 
 			return;
 
