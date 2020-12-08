@@ -29,6 +29,7 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 
 	private boolean isAutoRunning;
 	private BackgroundRunner bRunner;
+	private static final int AUTOPLAY_SPEED_MS =10;
 
 	public View() {
 		this.model = new SAPModel();
@@ -118,7 +119,7 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 				bRunner = null;
 			} else {
 				isAutoRunning = true;
-				bRunner = new BackgroundRunner(100);
+				bRunner = new BackgroundRunner(AUTOPLAY_SPEED_MS);
 				bRunner.start();
 			}
 		}

@@ -41,7 +41,6 @@ public class SAPModel implements ClockObserver {
 	private EventLog log;
 	private ALU adder;
 	private boolean[] controlLines;
-	private RegisterFlags regFlags;
 
 	private List<SAPObserver> observers;
 
@@ -59,7 +58,6 @@ public class SAPModel implements ClockObserver {
 		this.controlLines = new boolean[16];
 		this.observers = new ArrayList<SAPObserver>();
 		this.bus = new Register8Bit();
-		this.regFlags = new RegisterFlags();
 
 		// For testing purposes only
 		this.regA.loadVal((byte) 16);
@@ -83,7 +81,7 @@ public class SAPModel implements ClockObserver {
 		this.regMAR.clear();
 		this.bus.clear();
 		this.stepCount = 0;
-		this.regFlags.clear();
+		this.adder.regFlags.clear();
 		this.resetAllControlLines();
 
 		// Reset clock iff high
@@ -150,7 +148,7 @@ public class SAPModel implements ClockObserver {
 	}
 
 	public RegisterFlags getFlags() {
-		return this.regFlags;
+		return this.adder.regFlags;
 	}
 
 	// Observable Pattern
@@ -229,7 +227,7 @@ public class SAPModel implements ClockObserver {
 	}
 
 	private void resetAllControlLines() {
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			this.controlLines[i] = false;
 		}
 		this.bus.loadVal((byte) 0);
@@ -240,10 +238,8 @@ public class SAPModel implements ClockObserver {
 	private InstructionTypes decodeIR() {
 		// Get the value stored in the instruction register
 		byte instructionVal = this.regIR.getVal();
-		System.out.println("Before: "+ Integer.toBinaryString(instructionVal));
 		// Discard the four least significant bits
 		instructionVal = (byte) (instructionVal & 0b11110000);
-		System.out.println("After: "+ Integer.toBinaryString(instructionVal));
 
 		// Analyze the value
 		switch (instructionVal) {
@@ -583,7 +579,10 @@ public class SAPModel implements ClockObserver {
 
 		} else {
 			// Iterate over flags
-
+			if (this.controlLines[FI]) {
+				this.adder.flagsIn(this.controlLines[SU]);
+				this.notifyFlagRegisterChange();
+			}
 			if (this.controlLines[MI]) {
 				this.regMAR.loadVal(this.bus.getVal());
 				this.notifyMARChange();
@@ -623,10 +622,7 @@ public class SAPModel implements ClockObserver {
 				this.programCounter.loadVal((byte) (this.bus.getVal() & 0b1111));
 				this.notifyPCChange();
 			}
-			if (this.controlLines[FI]) {
-				this.adder.flagsIn(this.controlLines[SU]);
-				this.notifyFlagRegisterChange();
-			}
+			
 		}
 
 	}
