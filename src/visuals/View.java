@@ -23,8 +23,12 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 	private JTextArea logLabel;
 	private JButton resetButton;
 	private JButton clockButton;
+	private JButton playButton;
 	private SAPViewWidget viewWidget;
 	private RAMViewWidget ramWidget;
+
+	private boolean isAutoRunning;
+	private BackgroundRunner bRunner;
 
 	public View() {
 		this.model = new SAPModel();
@@ -69,11 +73,19 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 		this.clockButton.addActionListener(this);
 		this.clockButton.setActionCommand("clockButton");
 		this.add(clockButton, c);
-		
+
+		c.gridx = 3;
+		c.gridy = 3;
+		c.gridheight = 1;
+		this.playButton = new JButton("Autoplay");
+		this.playButton.setActionCommand("autoplay");
+		this.playButton.addActionListener(this);
+		this.add(playButton, c);
+
 		logLabel = new JTextArea(1, 1);
 		logLabel.setEditable(false);
 		c.gridx = 3;
-		c.gridy = 3;
+		c.gridy = 4;
 		c.ipadx = 220;
 		c.ipady = 350;
 		c.gridheight = 7;
@@ -99,6 +111,16 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 			this.model.reset();
 		} else if (e.getActionCommand().contentEquals("clockButton")) {
 			sap.Clock.getClock().toggleClock();
+		} else if (e.getActionCommand().contentEquals("autoplay")) {
+			if (isAutoRunning) {
+				isAutoRunning = false;
+				bRunner.terminate();
+				bRunner = null;
+			} else {
+				isAutoRunning = true;
+				bRunner = new BackgroundRunner(100);
+				bRunner.start();
+			}
 		}
 	}
 
