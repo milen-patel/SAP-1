@@ -29,7 +29,7 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 
 	private boolean isAutoRunning;
 	private BackgroundRunner bRunner;
-	private static final int AUTOPLAY_SPEED_MS =10;
+	private static final int AUTOPLAY_SPEED_MS = 10;
 
 	public View() {
 		this.model = new SAPModel();
@@ -49,6 +49,7 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 
 		this.ramWidget = new RAMViewWidget(this.model);
 		c.gridx = 0;
+		c.gridy = 0;
 		this.add(ramWidget, c);
 
 		welcome_label = new JLabel("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));

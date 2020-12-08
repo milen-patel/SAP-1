@@ -15,6 +15,10 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	private sap.SAPModel model;
 	private GridBagConstraints c;
 	private JButton[][] butts;
+	private JButton clearMemButton;
+	private JButton showOpcodeButton;
+	private JButton countingProgramButton;
+
 	private static Dimension buttonSize = new Dimension(20, 20);
 	private static Color COLOR_ON = new Color(124, 248, 42);
 	private static Color COLOR_OFF = new Color(34, 82, 20);
@@ -53,16 +57,43 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
+
+		c.gridx = 1;
+		c.gridy = 0;
+		c.gridwidth = 9;
+		this.clearMemButton = new JButton("Clear all Memory");
+		this.clearMemButton.setActionCommand("clearmem");
+		this.add(this.clearMemButton, c);
+
+		c.gridx = 1;
+		c.gridy = 1;
+		c.gridwidth = 9;
+		this.showOpcodeButton = new JButton("Show OPCodes");
+		this.showOpcodeButton.setActionCommand("showopcodes");
+		this.add(this.showOpcodeButton, c);
+
+		c.gridx = 1;
+		c.gridy = 2;
+		c.gridwidth = 9;
+		this.countingProgramButton = new JButton("Load Counting Program");
+		this.countingProgramButton.setActionCommand("loadcountprogram");
+		this.add(this.countingProgramButton, c);
+
+		// Reset constraint parameters
+		c.gridwidth = 1;
+		c.gridx = 1;
+		c.gridy = 1;
+
 		c.gridx = 3;
 		c.gridheight = 1;
 		c.gridwidth = 7;
-		c.gridy = 0;
+		c.gridy = 5;
 		this.add(new JLabel("Memory Content"), c);
 		c.gridx = 4;
 		c.gridwidth = 1;
 		for (int i = 1; i <= 16; i++) {
 			c.gridx = 1;
-			c.gridy = i;
+			c.gridy = i + 5;
 			switch (i - 1) {
 			case 0:
 				this.add(new JLabel("[0000]: "), c);
@@ -94,7 +125,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 			}
 			for (int j = 2; j < 10; j++) {
 				c.gridx = j;
-				this.add(butts[c.gridy - 1][j - 2], c);
+				this.add(butts[c.gridy - 1 - 5][j - 2], c);
 			}
 		}
 
@@ -113,6 +144,15 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	// Responds to button click indicating a bit change in memory
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().contentEquals("clearmem")) {
+			return;
+		}
+		if (e.getActionCommand().contentEquals("showopcodes")) {
+			return;
+		}
+		if (e.getActionCommand().contentEquals("loadcountprogram")) {
+			return;
+		}
 		// Parse the memory address
 		byte address = Byte.parseByte(e.getActionCommand().substring(0, e.getActionCommand().indexOf(",")));
 		// Parse the bit position change

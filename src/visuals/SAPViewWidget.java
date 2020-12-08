@@ -92,8 +92,10 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.add(label_ALU, c);
 
 		c.gridy = 7;
-		this.add(new JLabel("========"), c);
-
+		c.gridwidth = 12;
+		this.add(new JLabel("=================================================="), c);
+		c.gridwidth = 1;
+		
 		c.gridy = 8;
 		c.gridx = 0;
 		this.label_PC = new JLabel("Instruction Register");
@@ -105,8 +107,10 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.add(label_IR, c);
 
 		c.gridy = 11;
-		this.add(new JLabel("========"), c);
-
+		c.gridwidth = 12;
+		this.add(new JLabel("=================================================="), c);
+		c.gridwidth = 1;
+		
 		c.gridy = 12;
 		c.gridx = 0;
 		this.label_out = new JLabel("Output");
