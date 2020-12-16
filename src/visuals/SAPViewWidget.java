@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,20 +43,23 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JButton cFlag;
 	private JButton zFlag;
 
-	private static Dimension buttonSize = new Dimension(20, 20);
-	private static Color defaultButtonBackground = new Color(238, 238, 238);
-	private static Color selectedButtonBackground = new Color(55, 55, 55);
+	private static final Dimension BUTTON_SIZE = new Dimension(20, 20);
+	private static final Color BUTTON_UNSELECTED_BG = new Color(238, 238, 238);
+	private static final Color BUTTON_SELECTED_BG = new Color(55, 55, 55);
+	private static final Color COLOR_BACKGROUND = new Color(101,207,114);
 
 	public SAPViewWidget(sap.SAPModel model) {
 		// Encapsulate the model
 		this.model = model;
+		this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+
 
 		// Add ourselves as a model observer
 		this.model.addObserver(this);
 
 		// Set our preferred size
 		this.setPreferredSize(new Dimension(525, 500));
-		this.setBackground(Color.CYAN);
+		this.setBackground(COLOR_BACKGROUND);
 
 		// Set the Layout
 		this.setLayout(new GridBagLayout());
@@ -172,13 +176,13 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.controlBits[15] = new JButton("FI");
 
 		for (JButton b : controlBits) {
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 		}
 
 		c.gridy = 18;
 		for (int i = 0; i < 16; i++) {
 			controlBits[i].setBorder(null);
-			controlBits[i].setBackground(defaultButtonBackground);
+			controlBits[i].setBackground(BUTTON_UNSELECTED_BG);
 			controlBits[i].setOpaque(true);
 			if (i == 8) {
 				c.gridy++;
@@ -198,7 +202,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 7; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.BUS, 7 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			busBits[i] = b;
 		}
@@ -210,7 +214,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 7; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.A, 7 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			aBits[i] = b;
 		}
@@ -222,7 +226,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 7; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.B, 7 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			bBits[i] = b;
 		}
@@ -234,7 +238,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 7; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.ALU, 7 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			aluBits[i] = b;
 		}
@@ -246,7 +250,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 7; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.IR, 7 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			irBits[i] = b;
 		}
@@ -258,7 +262,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 7; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.OUT, 7 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			outBits[i] = b;
 		}
@@ -270,7 +274,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 3; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.PC, 3 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			pcBits[i] = b;
 		}
@@ -282,7 +286,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 3; i++) {
 			c.gridx = i + 1;
 			JButton b = new JButton(decodeRegister(RegisterType.MAR, 3 - i));
-			b.setPreferredSize(buttonSize);
+			b.setPreferredSize(BUTTON_SIZE);
 			this.add(b, c);
 			marBits[i] = b;
 		}
@@ -291,11 +295,11 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		c.gridy = 20;
 		c.gridx = 1;
 		this.cFlag = new JButton(this.model.getFlags().getCF() ? "C" : "-C");
-		this.cFlag.setPreferredSize(buttonSize);
+		this.cFlag.setPreferredSize(BUTTON_SIZE);
 		this.add(this.cFlag, c);
 		c.gridx = 2;
 		this.zFlag = new JButton(this.model.getFlags().getZF() ? "Z" : "-Z");
-		this.zFlag.setPreferredSize(buttonSize);
+		this.zFlag.setPreferredSize(BUTTON_SIZE);
 		this.add(this.zFlag, c);
 		// TODO del
 		this.controlLineChange();
@@ -398,9 +402,9 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		boolean[] newLines = this.model.getControlLines();
 		for (int i = 0; i < newLines.length; i++) {
 			if (newLines[i]) {
-				this.controlBits[i].setBackground(selectedButtonBackground);
+				this.controlBits[i].setBackground(BUTTON_SELECTED_BG);
 			} else {
-				this.controlBits[i].setBackground(defaultButtonBackground);
+				this.controlBits[i].setBackground(BUTTON_UNSELECTED_BG);
 			}
 		}
 	}

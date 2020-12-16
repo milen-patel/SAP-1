@@ -1,6 +1,8 @@
 package visuals;
 
 import java.awt.Color;
+import javax.swing.BorderFactory;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -22,9 +24,10 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	private JButton countingProgramButton;
 	private JButton analyzeProgramButton;
 
-	private static Dimension buttonSize = new Dimension(20, 20);
-	private static Color COLOR_ON = new Color(124, 248, 42);
-	private static Color COLOR_OFF = new Color(34, 82, 20);
+	private static final Dimension buttonSize = new Dimension(20, 20);
+	private static final Color COLOR_ON = new Color(124, 248, 42);
+	private static final Color COLOR_OFF = new Color(34, 82, 20);
+	private static final Color COLOR_BACKGROUND = new Color(225,246,203);
 
 	/*
 	 * Address: [0, 15] bitPos: [0, 7]
@@ -54,7 +57,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 
 		/* Set our preferred size */
 		this.setPreferredSize(new Dimension(220, 550));
-		this.setBackground(Color.LIGHT_GRAY);
+		this.setBackground(COLOR_BACKGROUND);
 
 		/* Set the Layout */
 		this.setLayout(new GridBagLayout());

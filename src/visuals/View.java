@@ -31,9 +31,12 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 	private boolean isAutoRunning;
 	private BackgroundRunner bRunner;
 	private static final int AUTOPLAY_SPEED_MS = 10;
+	private static final Color VIEW_BACKGROUND_COLOR = new Color(225,246,203);
 
 	public View() {
 		this.model = new SAPModel();
+		this.setBackground(VIEW_BACKGROUND_COLOR);
+		
 
 		/* Set the Layout */
 		this.setLayout(new GridBagLayout());
