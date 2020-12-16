@@ -9,12 +9,14 @@ import interfaces.ClockObserver;
 public class Clock {
 	private boolean status;
 	private boolean isHalted;
+	private boolean firstToggleSpacing;
 	private List<ClockObserver> observers;
 	private static Clock clock;
 
 	public Clock() {
 		this.status = false;
 		this.isHalted = false;
+		this.firstToggleSpacing = false;
 		observers = new ArrayList<ClockObserver>();
 	}
 
@@ -22,7 +24,7 @@ public class Clock {
 		getClock();
 		return this.status;
 	}
-	
+
 	public void setIsHalted(boolean newVal) {
 		this.isHalted = newVal;
 	}
@@ -30,21 +32,30 @@ public class Clock {
 	public void toggleClock() {
 		// Validate that a clock exists
 		getClock();
-		
+
 		// If halted, do nothing
 		if (this.isHalted) {
 			return;
 		}
-		
+
 		this.status = !this.status;
-		notifyObservers();
-		
+
+		// Add spacing, except for the first clock toggle
+		if (firstToggleSpacing) {
+			EventLog.getEventLog().addEntry("\n");
+		} else {
+			firstToggleSpacing = true;
+		}
+
 		// Add to event log
 		if (status) {
 			EventLog.getEventLog().addEntry("Rising Edge of Clock");
+
 		} else {
 			EventLog.getEventLog().addEntry("Falling Edge of Clock");
 		}
+
+		notifyObservers();
 		return;
 	}
 

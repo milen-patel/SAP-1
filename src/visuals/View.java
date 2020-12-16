@@ -101,7 +101,7 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		c.fill = GridBagConstraints.VERTICAL;
 		 DefaultCaret caret = (DefaultCaret)logLabel.getCaret();
 		 caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-		
+logLabel.setLineWrap(true);		
 		JScrollPane sv = new JScrollPane(logLabel);
 		sv.setAutoscrolls(true);
 		sv.setPreferredSize(new Dimension(20,100));

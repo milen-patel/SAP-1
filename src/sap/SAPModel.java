@@ -329,10 +329,10 @@ public class SAPModel implements ClockObserver {
 		if (t != InstructionTypes.NOP && t != InstructionTypes.INVALID) {
 			logVal += this.getRAM().getRAM()[address] & 0b00001111;
 		}
-		
+
 		// Finally, add decimal value
 		logVal += "\t" + this.getRAM().getRAM()[address];
-		
+
 		// Add final parsed string to the event log
 		EventLog.getEventLog().addEntry(logVal);
 	}
@@ -370,7 +370,6 @@ public class SAPModel implements ClockObserver {
 
 				// Figure out what instruction we are executing
 				InstructionTypes currIns = this.decodeIR();
-				// System.out.println(currIns);
 
 				if (currIns == InstructionTypes.NOP) {
 					if (this.stepCount == 3) {
@@ -399,6 +398,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. LDA => IO, MI set");
 
 					}
 					if (this.stepCount == 4) {
@@ -406,12 +406,13 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[RO] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. LDA => RO, AI set");
 
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. LDA => Do nothing");
 					}
 				}
 
@@ -421,13 +422,14 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. ADD => IO, MI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						this.controlLines[RO] = true;
 						this.controlLines[BI] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. ADD => RO, BI set");
 
 					}
 					if (this.stepCount == 5) {
@@ -436,6 +438,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[FI] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. ADD => ∑O, FI, AI set");
 
 					}
 				}
@@ -446,6 +449,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. SUB => IO, MI set");
 
 					}
 					if (this.stepCount == 4) {
@@ -453,7 +457,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[RO] = true;
 						this.controlLines[BI] = true;
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. SUB => RO, BI set");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
@@ -462,6 +466,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[FI] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. ADD => ∑O, SU, AI, FI set");
 
 					}
 				}
@@ -472,19 +477,20 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. STA => IO, MI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						this.controlLines[AO] = true;
 						this.controlLines[RI] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. STA => AO, RI set");
 
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. STA => Do nothing");
 					}
 				}
 
@@ -494,17 +500,17 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. LDI => IO, AI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. LDI => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. LDI => Do nothing");
 					}
 				}
 
@@ -514,58 +520,53 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[J] = true;
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. JMP => IO, J set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. JMP => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. JMP => Do nothing");
 					}
 				}
-				if (currIns == InstructionTypes.JC) { // TODO
+				if (currIns == InstructionTypes.JC) {
 					if (this.stepCount == 3) {
 						this.resetAllControlLines();
 						if (this.getFlags().getCF()) {
 							this.controlLines[IO] = true;
 							this.controlLines[J] = true;
-							System.out.println("C");
-
+							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JC => IO, J set since CF=1");
 						} else {
-							System.out.println("D");
+							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JC => IO, Do nothing since CF=0");
 						}
-
 						notifyControlLineChange();
-					} else {
-						// Add to log
 					}
 
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. JC => Do nothing");
 					}
+
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. JZ => Do nothing");
 					}
 				}
-				if (currIns == InstructionTypes.JZ) { // TODO
+				if (currIns == InstructionTypes.JZ) {
 					if (this.stepCount == 3) {
 						this.resetAllControlLines();
 						if (this.getFlags().getZF()) {
 							this.controlLines[IO] = true;
 							this.controlLines[J] = true;
-							System.out.println("A");
-
+							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JZ => IO, J set since ZF=1");
 						} else {
-							System.out.println("B");
-
+							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JZ => Do nothing since ZF=0");
 						}
 						notifyControlLineChange();
 
@@ -573,12 +574,12 @@ public class SAPModel implements ClockObserver {
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. JZ => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. JZ => Do nothing");
 					}
 				}
 				if (currIns == InstructionTypes.OUT) {
@@ -587,17 +588,17 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[AO] = true;
 						this.controlLines[OI] = true;
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. OUT => AO, OI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. OUT => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. OUT => Do nothing");
 					}
 				}
 				if (currIns == InstructionTypes.HLT) {
@@ -605,107 +606,117 @@ public class SAPModel implements ClockObserver {
 						this.resetAllControlLines();
 						this.controlLines[HLT] = true;
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. HLT => HLT set");
 
 					}
-					if (this.stepCount == 4) { // TODO delete these and clean other instructions
-						this.resetAllControlLines();
-						notifyControlLineChange();
-
-					}
-					if (this.stepCount == 5) {
-						this.resetAllControlLines();
-						notifyControlLineChange();
-
-					}
+					// No need to handle stepCount 4 and 5 since the clock can no longer advance
+					// with HLT enabled
 				}
-				if (currIns == InstructionTypes.INVALID) { // TODO
+				if (currIns == InstructionTypes.INVALID) {
 					if (this.stepCount == 3) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 3. Invalid Instruction => Do nothing");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
+						EventLog.getEventLog().addEntry("Falling edge of cycle 4. Invalid Instruction => Do nothing");
 
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-
+						EventLog.getEventLog().addEntry("Falling edge of cycle 5. Invalid Instruction => Do nothing");
 					}
 				}
 			}
-			// todo, all out flags should go
+
+			// Now we have set all of the falling edge signals, update the SAP accordingly
+			// since OUT instructions do not rely on the clock
 			if (this.controlLines[CO]) {
 				this.bus.loadVal(this.programCounter.getVal());
+				EventLog.getEventLog().addEntry("Program Counter value put onto bus (4 Bits)");
 				this.notifyBusChange();
 			}
 			if (this.controlLines[RO]) {
 				this.bus.loadVal((byte) this.RAM.memoryOut());
+				EventLog.getEventLog().addEntry("RAM value put onto bus");
 				this.notifyBusChange();
 			}
 			if (this.controlLines[IO]) {
-				// Instruction register puts 4 least significant bits onto bus
+				// Put 4 least significant bits of Instruction Register onto the bus
 				this.bus.loadVal((byte) (0b00001111 & this.regIR.getVal()));
 				this.notifyBusChange();
+				EventLog.getEventLog().addEntry("Instruction Register value put onto bus (4 Bits)");
 			}
 			if (this.controlLines[AO]) {
 				this.bus.loadVal(this.regA.getVal());
 				this.notifyBusChange();
+				EventLog.getEventLog().addEntry("A register value put onto bus");
 			}
 			if (this.controlLines[SO]) {
 				this.bus.loadVal(this.adder.ALUOut(this.controlLines[SU]));
-				this.notifyBusChange(); // TODO make sure this wont be problematic
+				this.notifyBusChange();
+				EventLog.getEventLog().addEntry("ALU sum value put onto bus");
 			}
-			// todo bus is empty when an out flag goes off
-
 			return;
 
 		} else {
-			// Iterate over flags
+			// Meaning we are on the rising edge of the clock, handle all signals dependent
+			// on a rising clock edge
 			if (this.controlLines[FI]) {
 				this.adder.flagsIn(this.controlLines[SU]);
 				this.notifyFlagRegisterChange();
+				EventLog.getEventLog().addEntry("Flags register updated");
+
 			}
 			if (this.controlLines[MI]) {
 				this.regMAR.loadVal(this.bus.getVal());
 				this.notifyMARChange();
+				EventLog.getEventLog().addEntry("Memory adddress register read in from bus");
+
 			}
 			if (this.controlLines[CE]) {
 				this.programCounter.counterEnable();
 				this.notifyPCChange();
+				EventLog.getEventLog().addEntry("Program counter incremented");
+
 			}
 			if (this.controlLines[HLT]) {
-				Clock.getClock().setIsHalted(true);
+				Clock.getClock().setIsHalted(true); // TODO
 			}
 			if (this.controlLines[RI]) {
 				this.RAM.memoryIn(this.bus.getVal());
+				EventLog.getEventLog().addEntry("RAM read in from bus");
 			}
 
 			if (this.controlLines[II]) {
 				this.regIR.loadVal(this.bus.getVal());
 				this.notifyIRChange();
+				EventLog.getEventLog().addEntry("Instruction register read in from bus");
 			}
 			if (this.controlLines[AI]) {
 				this.regA.loadVal(this.bus.getVal());
 				this.notifyAChange();
-			}
-
-			if (this.controlLines[SU]) {
-				// TODO
+				EventLog.getEventLog().addEntry("A register read in from bus");
 			}
 			if (this.controlLines[BI]) {
 				this.regB.loadVal(this.bus.getVal());
 				this.notifyBChange();
+				EventLog.getEventLog().addEntry("B register read in from bus");
+
 			}
 			if (this.controlLines[OI]) {
 				this.regOut.loadVal(this.bus.getVal());
 				this.notifyOutChange();
+				EventLog.getEventLog().addEntry("Output register read in from bus");
+
 			}
 			if (this.controlLines[J]) {
 				this.programCounter.loadVal((byte) (this.bus.getVal() & 0b1111));
 				this.notifyPCChange();
+				EventLog.getEventLog().addEntry("Program Counter changed from J flag");
 			}
 
 		}
