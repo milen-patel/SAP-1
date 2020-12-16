@@ -144,20 +144,29 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 			this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 			this.butts[address][i].setBorder(null);
 		}
+		EventLog.getEventLog().addEntry("Repainted RAM address " + address);
 	}
 
 	// Responds to button click indicating a bit change in memory
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().contentEquals("clearmem")) {
+			// Get the contents of memory
 			byte[] arr = this.model.getRAM().getRAM();
+			
 			for (int i = 0; i < 16; i++) {
 				// Set the value to 0
 				arr[i] = 0;
-				// Tell the display to repaint
-				this.valChanged(i);
-
 			}
+
+			// Force the display to repaint twice, to handle visual delay
+			for (int i = 0; i < 16; i++) {
+				this.valChanged(i);
+			}
+			for (int i = 0; i < 16; i++) {
+				this.valChanged(i);
+			}
+
 			return;
 		}
 		if (e.getActionCommand().contentEquals("showopcodes")) {
@@ -179,7 +188,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		if (e.getActionCommand().contentEquals("loadcountprogram")) {
 			// Grab internal representation of RAM
 			byte[] arr = this.model.getRAM().getRAM();
-		
+
 			// First clear the memory content
 			for (int i = 0; i < 16; i++) {
 				// Set the value to 0
@@ -188,7 +197,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 				this.valChanged(i);
 
 			}
-			
+
 			// Add updated memory content for this program
 			arr[0] = 0b01010001;
 			this.valChanged(0);
@@ -202,8 +211,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 			this.valChanged(4);
 			arr[14] = 0b00000001;
 			this.valChanged(14);
-			
-		
+
 			return;
 		}
 		// Parse the memory address
