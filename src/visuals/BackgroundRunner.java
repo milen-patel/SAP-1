@@ -4,16 +4,16 @@ import sap.Clock;
 
 public class BackgroundRunner extends Thread {
 
-	/* Instance Variables */
+	// Instance Variables 
 	private boolean isDone;
 	private double pauseDuration;
 
-	/* Constructor */
+	// Constructor 
 	public BackgroundRunner(double pauseDuration) {
-		/* Set Default Values */
+		// Set Default Values 
 		this.isDone = false;
 
-		/* Validate Input */
+		// Validate Input 
 		if (pauseDuration < 10 || pauseDuration > 1000) {
 			pauseDuration = 500;
 		} else {
@@ -21,7 +21,7 @@ public class BackgroundRunner extends Thread {
 		}
 	}
 
-	/* Ends termination of the thread */
+	// Ends termination of the thread 
 	public void terminate() {
 		isDone = true;
 	}
@@ -31,15 +31,15 @@ public class BackgroundRunner extends Thread {
 	}
 
 	public void run() {
-		/* Loop indefinetly, while possible */
+		// Loop indefinitely, while possible 
 		while (!isDone) {
-			/* Sleep the thread for the correct duration */
+			// Sleep the thread for the correct duration 
 			try {
 				Thread.sleep((long) pauseDuration);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			/* Make a move, then repeat the loop */
+			// Make a move, then repeat the loop 
 			Clock.getClock().toggleClock();
 		}
 	}

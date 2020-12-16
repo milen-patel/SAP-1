@@ -1,6 +1,7 @@
 package sap;
 
 public class RegisterFlags {
+	// Uses booleans to store the contents of the register
 	private boolean zeroFlag;
 	private boolean carryFlag;
 

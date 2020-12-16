@@ -26,5 +26,3 @@ public class Runner {
 		main_frame.setVisible(true);
 	}
 }
-
-//TODO fix commenting

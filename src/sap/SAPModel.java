@@ -9,6 +9,7 @@ import interfaces.SAPObserver;
 import java.util.ArrayList;
 
 public class SAPModel implements ClockObserver {
+	// Assign constant integer values to each control line signal
 	public static final int HLT = 0;
 	public static final int MI = 1;
 	public static final int RI = 2;
@@ -26,14 +27,17 @@ public class SAPModel implements ClockObserver {
 	public static final int J = 14;
 	public static final int FI = 15;
 
+	// Enumerates the valid register types in SAP-1
 	public enum RegisterType {
 		A, B, ALU, IR, OUT, PC, MAR, BUS
 	}
 
+	// Enumerates the valid instruction types supported in this simulator
 	public enum InstructionTypes {
 		NOP, LDA, ADD, SUB, STA, LDI, JMP, JC, JZ, OUT, HLT, INVALID
 	}
 
+	// Contents of the SAP-1
 	private Register regA;
 	private Register regB;
 	private Register regOut;
@@ -47,6 +51,8 @@ public class SAPModel implements ClockObserver {
 	private ALU adder;
 	private boolean[] controlLines;
 
+	// Since SAP is observable, it must maintain a list of its observers (which is
+	// just the View in this implementation)
 	private List<SAPObserver> observers;
 
 	public SAPModel() {
@@ -64,20 +70,15 @@ public class SAPModel implements ClockObserver {
 		this.observers = new ArrayList<SAPObserver>();
 		this.bus = new Register8Bit();
 
-		// For testing purposes only
-		this.regA.loadVal((byte) 16);
-		this.regB.loadVal((byte) 17);
-		this.regIR.loadVal((byte) 32);
-		this.programCounter.loadVal((byte) 15);
-		this.regOut.loadVal((byte) 64);
-		this.regMAR.loadVal((byte) 1);
-
-		// Make the model a clock observer
+		// Register the model as a clock observer
 		Clock.getClock().addObserver(this);
 	}
 
 	public void reset() {
+		// Inform the log
 		this.log.addEntry("User has requested to reset SAP...");
+
+		// Clear all registers and other data values (except memory)
 		this.regA.clear();
 		this.regB.clear();
 		this.regOut.clear();
@@ -89,11 +90,12 @@ public class SAPModel implements ClockObserver {
 		this.adder.regFlags.clear();
 		this.resetAllControlLines();
 
-		// Reset clock iff high
+		// Reset clock if and only if clock is high
 		if (Clock.getClock().getStatus()) {
 			Clock.getClock().toggleClock();
 		}
 
+		// Notify observers so view can repaint itself
 		for (SAPObserver o : observers) {
 			o.regAChange(this.regA.getVal());
 			o.regBChange(this.regB.getVal());
@@ -104,145 +106,30 @@ public class SAPModel implements ClockObserver {
 			o.marChange(this.regMAR.getVal());
 			o.busChange(this.bus.getVal());
 			o.controlLineChange();
-			o.flagChange();
-		}
-	}
-
-	public Memory getRAM() {
-		return this.RAM;
-	}
-
-	public Register getA() {
-		return this.regA;
-	}
-
-	public Register getB() {
-		return this.regB;
-	}
-
-	public ALU getALU() {
-		return this.adder;
-	}
-
-	public Register getIR() {
-		return this.regIR;
-	}
-
-	public Register getOut() {
-		return this.regOut;
-	}
-
-	public PC getPC() {
-		return this.programCounter;
-	}
-
-	public Register getMAR() {
-		return this.regMAR;
-	}
-
-	public boolean[] getControlLines() {
-		return this.controlLines;
-	}
-
-	public byte getStepCount() {
-		return this.stepCount;
-	}
-
-	public Register getBus() {
-		return this.bus;
-	}
-
-	public RegisterFlags getFlags() {
-		return this.adder.regFlags;
-	}
-
-	// Observable Pattern
-	public void addObserver(SAPObserver o) {
-		if (o == null) {
-			return;
-		}
-		this.observers.add(o);
-	}
-
-	public void removeObserver(SAPObserver o) {
-		if (o == null) {
-			return;
-		}
-		this.observers.remove(o);
-	}
-
-	private void notifyControlLineChange() {
-		for (SAPObserver o : observers) {
-			o.controlLineChange();
-		}
-	}
-
-	private void notifyStepCounterChange() {
-		for (SAPObserver o : observers) {
-			o.stepCycleChange(this.stepCount);
-		}
-	}
-
-	private void notifyBusChange() {
-		for (SAPObserver o : observers) {
-			o.busChange(this.bus.getVal());
-		}
-	}
-
-	private void notifyMARChange() {
-		for (SAPObserver o : observers) {
-			o.marChange(this.regMAR.getVal());
-		}
-	}
-
-	private void notifyPCChange() {
-		for (SAPObserver o : observers) {
-			o.pcChange(this.programCounter.getVal());
-		}
-	}
-
-	private void notifyIRChange() {
-		for (SAPObserver o : observers) {
-			o.irChange(this.regIR.getVal());
-		}
-	}
-
-	private void notifyAChange() {
-		for (SAPObserver o : observers) {
-			o.regAChange(this.regA.getVal());
-		}
-	}
-
-	private void notifyBChange() {
-		for (SAPObserver o : observers) {
-			o.regBChange(this.regB.getVal());
-		}
-	}
-
-	private void notifyOutChange() {
-		for (SAPObserver o : observers) {
-			o.outChange(this.regOut.getVal());
-		}
-	}
-
-	private void notifyFlagRegisterChange() {
-		for (SAPObserver o : observers) {
 			o.flagChange();
 		}
 	}
 
 	private void resetAllControlLines() {
+		// Set all control lines to false
 		for (int i = 0; i < 16; i++) {
 			this.controlLines[i] = false;
 		}
+
+		// Nothing is putting its value onto the bus, so clear it
 		this.bus.loadVal((byte) 0);
+
+		// Tell the view to repaint the bus
 		this.notifyBusChange();
+
+		// If the clock is halted, remove that constraint
 		Clock.getClock().setIsHalted(false);
 	}
 
 	private InstructionTypes decodeIR() {
 		// Get the value stored in the instruction register
 		byte instructionVal = this.regIR.getVal();
+
 		// Discard the four least significant bits
 		instructionVal = (byte) (instructionVal & 0b11110000);
 
@@ -250,6 +137,7 @@ public class SAPModel implements ClockObserver {
 		return decodeInstructionHelper(instructionVal);
 	}
 
+	// Helper method that parses a byte and finds its instruciton type
 	private InstructionTypes decodeInstructionHelper(byte instructionVal) {
 		switch (instructionVal) {
 		case 0b00000000:
@@ -286,6 +174,8 @@ public class SAPModel implements ClockObserver {
 		// First, add the instruction to logVal
 		byte instructionVal = (byte) (this.getRAM().getRAM()[address] & 0b11110000);
 		InstructionTypes t = decodeInstructionHelper(instructionVal);
+
+		// Handle result of decoded instruction
 		switch (t) {
 		case NOP:
 			logVal += "NOP";
@@ -350,22 +240,24 @@ public class SAPModel implements ClockObserver {
 			EventLog.getEventLog().addEntry("Step counter updated to " + this.stepCount);
 
 			if (this.stepCount == 1) {
+
 				// If we are on cycle 1, set lines manually
 				this.resetAllControlLines();
 				this.controlLines[CO] = true;
 				this.controlLines[MI] = true;
 				notifyControlLineChange();
-				EventLog.getEventLog()
-						.addEntry("The control lines were set: CO, MI");
+				EventLog.getEventLog().addEntry("The control lines were set: CO, MI");
+
 			} else if (this.stepCount == 2) {
+
 				// If we are on cycle 2, set lines manually
 				this.resetAllControlLines();
 				this.controlLines[CE] = true;
 				this.controlLines[RO] = true;
 				this.controlLines[II] = true;
 				notifyControlLineChange();
-				EventLog.getEventLog()
-						.addEntry("The control lines were set: CE, RO, II");
+				EventLog.getEventLog().addEntry("The control lines were set: CE, RO, II");
+
 			} else {
 
 				// Figure out what instruction we are executing
@@ -721,6 +613,130 @@ public class SAPModel implements ClockObserver {
 
 		}
 
+	}
+
+	// Getter Methods
+	public Memory getRAM() {
+		return this.RAM;
+	}
+
+	public Register getA() {
+		return this.regA;
+	}
+
+	public Register getB() {
+		return this.regB;
+	}
+
+	public ALU getALU() {
+		return this.adder;
+	}
+
+	public Register getIR() {
+		return this.regIR;
+	}
+
+	public Register getOut() {
+		return this.regOut;
+	}
+
+	public PC getPC() {
+		return this.programCounter;
+	}
+
+	public Register getMAR() {
+		return this.regMAR;
+	}
+
+	public boolean[] getControlLines() {
+		return this.controlLines;
+	}
+
+	public byte getStepCount() {
+		return this.stepCount;
+	}
+
+	public Register getBus() {
+		return this.bus;
+	}
+
+	public RegisterFlags getFlags() {
+		return this.adder.regFlags;
+	}
+
+	// Observable Pattern
+	public void addObserver(SAPObserver o) {
+		if (o == null) {
+			return;
+		}
+		this.observers.add(o);
+	}
+
+	public void removeObserver(SAPObserver o) {
+		if (o == null) {
+			return;
+		}
+		this.observers.remove(o);
+	}
+
+	private void notifyControlLineChange() {
+		for (SAPObserver o : observers) {
+			o.controlLineChange();
+		}
+	}
+
+	private void notifyStepCounterChange() {
+		for (SAPObserver o : observers) {
+			o.stepCycleChange(this.stepCount);
+		}
+	}
+
+	private void notifyBusChange() {
+		for (SAPObserver o : observers) {
+			o.busChange(this.bus.getVal());
+		}
+	}
+
+	private void notifyMARChange() {
+		for (SAPObserver o : observers) {
+			o.marChange(this.regMAR.getVal());
+		}
+	}
+
+	private void notifyPCChange() {
+		for (SAPObserver o : observers) {
+			o.pcChange(this.programCounter.getVal());
+		}
+	}
+
+	private void notifyIRChange() {
+		for (SAPObserver o : observers) {
+			o.irChange(this.regIR.getVal());
+		}
+	}
+
+	private void notifyAChange() {
+		for (SAPObserver o : observers) {
+			o.regAChange(this.regA.getVal());
+		}
+	}
+
+	private void notifyBChange() {
+		for (SAPObserver o : observers) {
+			o.regBChange(this.regB.getVal());
+		}
+	}
+
+	private void notifyOutChange() {
+		for (SAPObserver o : observers) {
+			o.outChange(this.regOut.getVal());
+		}
+	}
+
+	private void notifyFlagRegisterChange() {
+		for (SAPObserver o : observers) {
+			o.flagChange();
+		}
 	}
 
 }

@@ -11,7 +11,9 @@ public class Register4Bit implements Register {
 	}
 
 	@Override
+	// Loads 4 bit value into the register
 	public void loadVal(byte newVal) {
+		// Make sure input is 4 bits
 		if (newVal > 0b1111) {
 			throw new RuntimeException();
 		}
@@ -19,11 +21,13 @@ public class Register4Bit implements Register {
 	}
 
 	@Override
+	// Getter
 	public byte getVal() {
 		return this.content;
 	}
 	
 	@Override
+	// Resets register contents
 	public void clear() {
 		this.content = 0;
 	}

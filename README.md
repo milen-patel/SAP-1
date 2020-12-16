@@ -16,7 +16,7 @@ After building this computer on a breadboard following Ben Eater's tutorials ([m
 - **Analyze Program**: Translates the current memory content into a more readable form in the SAP Instruction Set, displays the readable version in the Event Log.  
 
 ## Getting Start
-## Exampple Programs
+## Example Programs
 
 ### Operation Codes
 | OPCode      |  Binary Value |

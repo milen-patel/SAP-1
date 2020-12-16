@@ -8,28 +8,18 @@ public class ALU {
 	RegisterFlags regFlags;
 
 	public ALU(Register A, Register B) {
+		// The ALU maintains references to the two operand registers in addition to a
+		// register for storing flags
 		this.regA = A;
 		this.regB = B;
 		this.regFlags = new RegisterFlags();
 	}
 
+	// Updates the flags register based on the current ALU value
 	public void flagsIn(boolean sub) {
-		/*
-		 * int result; if (sub) { //result = this.regA.getVal() - this.regB.getVal();
-		 * result = Byte.toUnsignedInt(this.regA.getVal()) -
-		 * Byte.toUnsignedInt(this.regB.getVal());
-		 * 
-		 * } else { //result = this.regA.getVal() + this.regB.getVal(); result =
-		 * Byte.toUnsignedInt(this.regA.getVal()) -
-		 * Byte.toUnsignedInt(this.regB.getVal());
-		 * 
-		 * } if (result < 0) {
-		 * 
-		 * } boolean zF = (result == 0); boolean cF = ((result & 0b11100000000) != 0);
-		 * System.out.println("FLAGS FUNC"+zF+cF+Integer.toBinaryString(result &
-		 * 0b11100000000)); regFlags.FlagsIn(zF, cF);
-		 */
 		boolean zF, cF;
+		
+		// Compute the zero flag
 		int result = (0b00000000000000000000000011111111 & this.regA.getVal())
 				+ (0b00000000000000000000000011111111 & this.regB.getVal());
 		if ((result & 0b11111111) == 0) {
@@ -38,19 +28,18 @@ public class ALU {
 			zF = false;
 		}
 
+		// Compute the carry flag
 		if ((result & 0b100000000) == 0) {
 			cF = false;
 		} else {
 			cF = true;
 		}
 
+		// Use the flags register function to update values
 		regFlags.FlagsIn(zF, cF);
-
-		//System.out.println("FLAGS FUNC"+zF+cF+Integer.toBinaryString(result & 0b11100000000));
-		// String a = Integer.toBinaryString(0b11111111 & this.regA.getVal());
-		// System.out.println("FLAGS FUNC"+zF+cF+Integer.toBinaryString(result));
 	}
 
+	// Returns the current value of the stateless ALU
 	public byte ALUOut(boolean sub) {
 		if (sub) {
 			return (byte) (this.regA.getVal() - this.regB.getVal());
@@ -59,6 +48,7 @@ public class ALU {
 		}
 	}
 
+	// Getter functions for the ALU flags
 	public boolean getZeroFlag() {
 		return this.regFlags.getZF();
 	}

@@ -19,8 +19,9 @@ import javax.swing.text.DefaultCaret;
 
 public class View extends JPanel implements interfaces.LogObserver, ActionListener, interfaces.ClockObserver {
 
+	// Components needed by the widget
 	private SAPModel model;
-	private JLabel welcome_label;
+	private JLabel clockStatusLabel;
 	private GridBagConstraints c;
 	private JTextArea logLabel;
 	private JButton resetButton;
@@ -29,8 +30,11 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 	private SAPViewWidget viewWidget;
 	private RAMViewWidget ramWidget;
 
+	// Needed for the auto-runner
 	private boolean isAutoRunning;
 	private BackgroundRunner bRunner;
+	
+	// Constants
 	private static final int AUTOPLAY_SPEED_MS = 100;
 	private static final Color VIEW_BACKGROUND_COLOR = new Color(225, 246, 203);
 
@@ -38,31 +42,33 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		this.model = new SAPModel();
 		this.setBackground(VIEW_BACKGROUND_COLOR);
 
-		/* Set the Layout */
+		// Set the Layout
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.VERTICAL;
 		this.setPreferredSize(new Dimension(1000, 1000));
 
+		// Add the SAP View Widget (Middle part)
 		this.viewWidget = new SAPViewWidget(this.model);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridheight = 6;
-
 		this.add(viewWidget, c);
 
+		// Add the RAM View Widget
 		this.ramWidget = new RAMViewWidget(this.model);
 		c.gridx = 0;
 		c.gridy = 0;
 		this.add(ramWidget, c);
-
-		welcome_label = new JLabel("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));
-
+		
+		// Display the status of the clock
+		clockStatusLabel = new JLabel("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));
 		c.gridx = 3;
 		c.gridy = 0;
 		c.gridheight = 1;
-		this.add(welcome_label, c);
-
+		this.add(clockStatusLabel, c);
+		
+		// Add reset button
 		resetButton = new JButton("Reset");
 		resetButton.setActionCommand("resetButtonClicked");
 		resetButton.addActionListener(this);
@@ -72,6 +78,7 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		c.gridheight = 1;
 		this.add(resetButton, c);
 
+		// Add toggle clock button
 		c.gridx = 3;
 		c.gridy = 2;
 		c.gridheight = 1;
@@ -80,6 +87,7 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		this.clockButton.setActionCommand("clockButton");
 		this.add(clockButton, c);
 
+		// Add autoplay button
 		c.gridx = 3;
 		c.gridy = 3;
 		c.gridheight = 1;
@@ -88,7 +96,7 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		this.playButton.addActionListener(this);
 		this.add(playButton, c);
 
-		// Add gap to the left of the log
+		// Add gap to the left of the log; add log visualizer
 		c.insets = new Insets(0, 6, 0, 0);
 		logLabel = new JTextArea(1, 1);
 		logLabel.setMaximumSize(new Dimension(20, 20));
@@ -105,11 +113,11 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		sv.setAutoscrolls(true);
 		sv.setPreferredSize(new Dimension(20, 100));
 		sv.setMaximumSize(new Dimension(20, 100));
-
 		this.add(sv, c);
 
 		// Add the view as a log observer
 		sap.EventLog.getEventLog().addObserver(this);
+		
 		// Add the view as a clock observer
 		sap.Clock.getClock().addObserver(this);
 	}
@@ -121,6 +129,7 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 	}
 
 	@Override
+	// Handle button clicks
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("resetButtonClicked")) {
 			this.model.reset();
@@ -140,7 +149,8 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 	}
 
 	@Override
+	// If the clock changes, update our label
 	public void clockChange() {
-		this.welcome_label.setText("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));
+		this.clockStatusLabel.setText("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));
 	}
 }

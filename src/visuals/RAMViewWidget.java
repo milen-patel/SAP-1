@@ -1,8 +1,6 @@
 package visuals;
 
 import java.awt.Color;
-import javax.swing.BorderFactory;
-
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,6 +14,7 @@ import javax.swing.JPanel;
 import sap.EventLog;
 
 public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, ActionListener {
+	// Widget components
 	private sap.SAPModel model;
 	private GridBagConstraints c;
 	private JButton[][] butts;
@@ -24,24 +23,19 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton countingProgramButton;
 	private JButton analyzeProgramButton;
 
+	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
+	private static final Dimension WIDGET_SIZE = new Dimension(220, 550);
 	private static final Color COLOR_ON = new Color(124, 248, 42);
 	private static final Color COLOR_OFF = new Color(34, 82, 20);
-	private static final Color COLOR_BACKGROUND = new Color(225,246,203);
-
-	/*
-	 * Address: [0, 15] bitPos: [0, 7]
-	 */
-	private int lookupRAM(int address, int bitPos) {
-		int val = 0b11111111 & this.model.getRAM().getRAM()[address];
-		return (val >> bitPos) & 0b1;
-	}
+	private static final Color COLOR_BACKGROUND = new Color(225, 246, 203);
 
 	public RAMViewWidget(sap.SAPModel model) {
 		this.model = model;
 		// Add ourselves as a RAMObserver
 		this.model.getRAM().addRAMObserver(this);
 
+		// Create the array of buttons representing each bit of memory
 		butts = new JButton[16][8];
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -55,15 +49,16 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			}
 		}
 
-		/* Set our preferred size */
-		this.setPreferredSize(new Dimension(220, 550));
+		// Set our preferred size
+		this.setPreferredSize(WIDGET_SIZE);
 		this.setBackground(COLOR_BACKGROUND);
 
-		/* Set the Layout */
+		// Set the Layout
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 
+		// Add the reset RAM button
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridwidth = 9;
@@ -72,6 +67,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.clearMemButton.addActionListener(this);
 		this.add(this.clearMemButton, c);
 
+		// Add the show OPCodes button
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth = 9;
@@ -80,7 +76,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.showOpcodeButton.addActionListener(this);
 		this.add(this.showOpcodeButton, c);
 
-
+		// Add the sample program loader button
 		c.gridx = 1;
 		c.gridy = 2;
 		c.gridwidth = 9;
@@ -88,7 +84,8 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.countingProgramButton.setActionCommand("loadcountprogram");
 		this.countingProgramButton.addActionListener(this);
 		this.add(this.countingProgramButton, c);
-		
+
+		// Add the analyze program button
 		c.gridx = 1;
 		c.gridy = 3;
 		c.gridwidth = 9;
@@ -97,16 +94,14 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.analyzeProgramButton.addActionListener(this);
 		this.add(this.analyzeProgramButton, c);
 
-		// Reset constraint parameters
-		c.gridwidth = 1;
-		c.gridx = 1;
-		c.gridy = 1;
-
+		// Add label above RAM content
 		c.gridx = 3;
 		c.gridheight = 1;
 		c.gridwidth = 7;
 		c.gridy = 5;
 		this.add(new JLabel("Memory Content"), c);
+
+		// Display the memory content
 		c.gridx = 4;
 		c.gridwidth = 1;
 		for (int i = 1; i <= 16; i++) {
@@ -146,23 +141,35 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 				this.add(butts[c.gridy - 1 - 5][j - 2], c);
 			}
 		}
-
 		repaint();
 	}
 
+	// Helper function for accessing individual bits in memory; Address: [0, 15]
+	// bitPos: [0, 7]
+	private int lookupRAM(int address, int bitPos) {
+		int val = 0b11111111 & this.model.getRAM().getRAM()[address];
+		return (val >> bitPos) & 0b1;
+	}
+
 	@Override
+	// If a value in memory is changed, repaint it
 	public void valChanged(int address) {
+
+		// Iterate over all bits in the current memory position
 		for (int i = 0; i <= 7; i++) {
 			this.butts[address][i].setText("" + lookupRAM(address, 7 - i));
 			this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 			this.butts[address][i].setBorder(null);
 		}
+
+		// Inform the log
 		EventLog.getEventLog().addEntry("Repainted RAM address " + address);
 	}
 
-	// Responds to button click indicating a bit change in memory
 	@Override
+	// Responds to button click indicating a bit change in memory
 	public void actionPerformed(ActionEvent e) {
+		// If the user clicks the analyze program button
 		if (e.getActionCommand().contentEquals("analyzeProgram")) {
 			EventLog.getEventLog().addEntry("=============");
 			EventLog.getEventLog().addEntry("[ADDRESS]\t[INSTR]\t[DEC]");
@@ -172,10 +179,12 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			EventLog.getEventLog().addEntry("=============");
 			return;
 		}
+
+		// If the user clicks the clear memory button
 		if (e.getActionCommand().contentEquals("clearmem")) {
 			// Get the contents of memory
 			byte[] arr = this.model.getRAM().getRAM();
-			
+
 			for (int i = 0; i < 16; i++) {
 				// Set the value to 0
 				arr[i] = 0;
@@ -188,9 +197,10 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			for (int i = 0; i < 16; i++) {
 				this.valChanged(i);
 			}
-
 			return;
 		}
+
+		// If the user clicks the show opcdoes button
 		if (e.getActionCommand().contentEquals("showopcodes")) {
 			EventLog.getEventLog().addEntry("=============");
 			EventLog.getEventLog().addEntry("NOP\t0000");
@@ -207,10 +217,12 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			EventLog.getEventLog().addEntry("=============");
 			return;
 		}
+
+		// If the user clicks the load demo program button
 		if (e.getActionCommand().contentEquals("loadcountprogram")) {
 			// Grab internal representation of RAM
 			byte[] arr = this.model.getRAM().getRAM();
-			
+
 			// First clear the memory content
 			for (int i = 0; i < 16; i++) {
 				// Set the value to 0
@@ -236,6 +248,8 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 			return;
 		}
+
+		// Otherwise, the user must have requested a bit change somewhere in memory
 		// Parse the memory address
 		byte address = Byte.parseByte(e.getActionCommand().substring(0, e.getActionCommand().indexOf(",")));
 		// Parse the bit position change
@@ -260,7 +274,5 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 		// Inform the log
 		sap.EventLog.getEventLog().addEntry("Memory address " + address + " changed to " + newVal);
-
 	}
-
 }

@@ -5,7 +5,8 @@ import java.util.List;
 
 import interfaces.LogObserver;
 
-/* The event log is responsible for encapsulating information about significant changes made in the model class
+/* 
+ * The event log is responsible for encapsulating information about significant changes made in the model class
  * The event log is displayed to the user since the View class is-a LogObserver
  * The event log has been created as a singleton, meaning that only one instance of the class can ever exist
  */
@@ -15,15 +16,17 @@ public class EventLog {
 	 * represent all of the events that have occurred in the log
 	 */
 	private List<String> events;
+
 	/*
 	 * Using the observer/observable design pattern, we must maintain a list of
 	 * LogObserver's
 	 */
 	private List<LogObserver> observers;
-	/* Encapsulate an instance of 'this' to implement the factory design pattern */
+
+	// Encapsulate an instance of 'this' to implement the factory design pattern
 	private static EventLog eventLog;
 
-	/* Private constructor */
+	// Private constructor
 	private EventLog() {
 		events = new ArrayList<String>();
 		observers = new ArrayList<LogObserver>();
@@ -44,21 +47,20 @@ public class EventLog {
 		}
 	}
 
-	/* Adds an entry to the log and notifies appropriate observers */
+	// Adds an entry to the log and notifies appropriate observers
 	public void addEntry(String entry) {
-		/* Check input before adding to the log */
+		// Check input before adding to the log
 		if (entry == null) {
 			throw new RuntimeException("Null string passed to log addEntry()");
 		}
 		events.add(entry);
-		/*
-		 * Now that we have changed the log, notify observers so the UI can repaint
-		 * itself
-		 */
+
+		// Now that we have changed the log, notify observers so the UI can repaint
+		// itself
 		notifyObservers(entry);
 	}
 
-	/* Observable Methods */
+	// Observable Methods
 	public void addObserver(LogObserver o) {
 		observers.add(o);
 	}

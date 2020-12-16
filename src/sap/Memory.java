@@ -8,8 +8,13 @@ import interfaces.RAMObserver;
 import interfaces.Register;
 
 public class Memory {
+	// Maintain the RAM values as a byte array
 	private byte[] data;
+
+	// Memory maintains a reference to the memory address register
 	private Register MAR;
+
+	// Memory is observable, so it must maintain a list of observers
 	private List<RAMObserver> observers;
 
 	public Memory(Register MAR) {
@@ -24,24 +29,29 @@ public class Memory {
 
 	}
 
+	// loads val into the memory address held in the Memory Address Register
 	public void memoryIn(byte val) {
 		this.data[this.MAR.getVal()] = val;
 		this.notifyObservers(this.MAR.getVal());
 	}
 
+	// Manually changes a memory address, used in RAM Widget
 	public void manualValueChange(int address, byte newVal) {
 		this.data[address] = newVal;
 		this.notifyObservers(address);
 	}
 
+	// Returns the data stored in the address held in the Memory Address Register
 	public int memoryOut() {
 		return this.data[(int) this.MAR.getVal()];
 	}
 
+	// Returns the memory contents
 	public byte[] getRAM() {
 		return this.data;
 	}
 
+	// Methods for implementing the observable design pattern
 	public void addRAMObserver(RAMObserver o) {
 		if (o == null) {
 			return;

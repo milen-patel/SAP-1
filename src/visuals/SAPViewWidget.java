@@ -15,9 +15,11 @@ import interfaces.SAPObserver;
 import sap.SAPModel.RegisterType;
 
 public class SAPViewWidget extends JPanel implements SAPObserver {
+	// Widget maintains a reference to the model
 	private sap.SAPModel model;
 	private GridBagConstraints c;
 
+	// Contents of the widget
 	private JLabel label_regA;
 	private JLabel label_regB;
 	private JLabel label_ALU;
@@ -43,22 +45,24 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JButton cFlag;
 	private JButton zFlag;
 
+	// Constants
 	private static final Dimension BUTTON_SIZE = new Dimension(20, 20);
+	private static final Dimension WIDGET_SIZE = new Dimension(525, 500);
 	private static final Color BUTTON_UNSELECTED_BG = new Color(238, 238, 238);
 	private static final Color BUTTON_SELECTED_BG = new Color(55, 55, 55);
-	private static final Color COLOR_BACKGROUND = new Color(101,207,114);
+	private static final Color COLOR_BACKGROUND = new Color(101, 207, 114);
+	private static final Color WIDGET_BORDER_COLOR = Color.BLACK;
 
 	public SAPViewWidget(sap.SAPModel model) {
 		// Encapsulate the model
 		this.model = model;
-		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
+		this.setBorder(BorderFactory.createLineBorder(WIDGET_BORDER_COLOR));
 
 		// Add ourselves as a model observer
 		this.model.addObserver(this);
 
 		// Set our preferred size
-		this.setPreferredSize(new Dimension(525, 500));
+		this.setPreferredSize(WIDGET_SIZE);
 		this.setBackground(COLOR_BACKGROUND);
 
 		// Set the Layout
@@ -75,9 +79,6 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.label_bus = new JLabel("BUS");
 		this.add(this.label_bus, c);
 
-		c.gridy = 1;
-		// this.add(new JLabel("========"), c);
-
 		// Add component labels
 		c.gridwidth = 1;
 		c.gridy = 2;
@@ -85,67 +86,80 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.label_regA = new JLabel("Register A");
 		this.add(label_regA, c);
 
+		// Register B Label
 		c.gridy = 4;
 		c.gridx = 0;
 		this.label_regB = new JLabel("Register B");
 		this.add(label_regB, c);
 
+		// ALU Label
 		c.gridy = 6;
 		c.gridx = 0;
 		this.label_ALU = new JLabel("ALU");
 		this.add(label_ALU, c);
 
+		// Line Break
 		c.gridy = 7;
 		c.gridwidth = 12;
 		this.add(new JLabel("=================================================="), c);
 		c.gridwidth = 1;
-		
+
+		// IR Label
 		c.gridy = 8;
 		c.gridx = 0;
 		this.label_PC = new JLabel("Instruction Register");
 		this.add(label_PC, c);
 
+		// PC Label
 		c.gridy = 10;
 		c.gridx = 0;
 		this.label_IR = new JLabel("Program Counter");
 		this.add(label_IR, c);
 
+		// Line Break
 		c.gridy = 11;
 		c.gridwidth = 12;
 		this.add(new JLabel("=================================================="), c);
 		c.gridwidth = 1;
-		
+
+		// Output Label
 		c.gridy = 12;
 		c.gridx = 0;
 		this.label_out = new JLabel("Output");
 		this.add(label_out, c);
 
+		// Memory Address Register Label
 		c.gridy = 14;
 		c.gridx = 0;
 		this.label_MAR = new JLabel("MAR");
 		this.add(label_MAR, c);
 
+		// Step Count Label
 		c.gridy = 16;
 		c.gridx = 0;
 		this.label_stepCount = new JLabel("Step Count");
 		this.add(this.label_stepCount, c);
 
+		// Show the step count
 		c.gridy = 16;
 		c.gridx = 1;
 		this.stepCt = new JLabel("" + this.model.getStepCount());
 		this.add(this.stepCt, c);
 
+		// Line Break
 		c.gridx = 0;
 		c.gridwidth = 12;
 		c.gridy = 17;
 		this.add(new JLabel("=================================================="), c);
 
+		// Control Line Label
 		c.gridwidth = 1;
 		c.gridy = 18;
 		c.gridx = 0;
 		this.label_controls = new JLabel("Control Lines");
 		this.add(this.label_controls, c);
 
+		// Flags register label
 		c.gridy = 20;
 		c.gridx = 0;
 		this.label_flags = new JLabel("Flags");
@@ -175,10 +189,12 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.controlBits[14] = new JButton("J");
 		this.controlBits[15] = new JButton("FI");
 
+		// Set control button size
 		for (JButton b : controlBits) {
 			b.setPreferredSize(BUTTON_SIZE);
 		}
 
+		// Visualize the control lines
 		c.gridy = 18;
 		for (int i = 0; i < 16; i++) {
 			controlBits[i].setBorder(null);
@@ -301,11 +317,12 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		this.zFlag = new JButton(this.model.getFlags().getZF() ? "Z: 1" : "Z: 0");
 		this.zFlag.setPreferredSize(BUTTON_SIZE);
 		this.add(this.zFlag, c);
-		// TODO del
+
 		this.controlLineChange();
 		repaint();
 	}
 
+	// Helper method for decoding the contents of a register
 	private String decodeRegister(RegisterType t, int bitPos) {
 		byte val = 0;
 		if (t == RegisterType.A) {
@@ -329,6 +346,8 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 
 	}
 
+	// If A/B register changes or SUB flag changes, repaint
+	// TODO make sure that SUB flag change updates the ALU
 	private void updateALU() {
 		for (int i = 0; i <= 7; i++) {
 			aluBits[i].setText(decodeRegister(RegisterType.ALU, 7 - i));
@@ -408,6 +427,4 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 			}
 		}
 	}
-
-
 }

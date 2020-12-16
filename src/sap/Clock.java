@@ -5,12 +5,21 @@ import java.util.List;
 
 import interfaces.ClockObserver;
 
-/* Singleton clock */
+// Singleton clock 
 public class Clock {
+	// false -> clock low; true -> clock high
 	private boolean status;
+
+	// If true, clock status cannot change
 	private boolean isHalted;
+	
+	// Used for spacing in the event log
 	private boolean firstToggleSpacing;
+	
+	// Since clock is observable, it needs to maintain a list of observers
 	private List<ClockObserver> observers;
+	
+	// Singleton clock must maintain a static reference to itself
 	private static Clock clock;
 
 	public Clock() {
@@ -19,12 +28,17 @@ public class Clock {
 		this.firstToggleSpacing = false;
 		observers = new ArrayList<ClockObserver>();
 	}
-
+	
+	// Returns false if clock is low, true if clock is high
 	public boolean getStatus() {
+		// First call getClock to ensure that a clock has been created and stored in the static reference field
 		getClock();
+		
+		// Then, return singleton's status
 		return this.status;
 	}
 
+	// Provides ability to halt or unhalt the clock
 	public void setIsHalted(boolean newVal) {
 		this.isHalted = newVal;
 	}
@@ -37,7 +51,8 @@ public class Clock {
 		if (this.isHalted) {
 			return;
 		}
-
+		
+		// Invert status
 		this.status = !this.status;
 
 		// Add spacing, except for the first clock toggle
@@ -55,11 +70,14 @@ public class Clock {
 			EventLog.getEventLog().addEntry("Falling Edge of Clock");
 		}
 
+		// Tell observers that the clock has changed
 		notifyObservers();
 		return;
 	}
 
+	// Getter method for singleton clock
 	public static Clock getClock() {
+		// If we don't have a clock, make a new one; else, return the current clock
 		if (clock == null) {
 			clock = new Clock();
 			return clock;
