@@ -16,6 +16,7 @@ import javax.swing.*;
 
 import sap.SAPModel;
 import javax.swing.text.DefaultCaret;
+
 public class View extends JPanel implements interfaces.LogObserver, ActionListener, interfaces.ClockObserver {
 
 	private SAPModel model;
@@ -30,13 +31,12 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 
 	private boolean isAutoRunning;
 	private BackgroundRunner bRunner;
-	private static final int AUTOPLAY_SPEED_MS = 10;
-	private static final Color VIEW_BACKGROUND_COLOR = new Color(225,246,203);
+	private static final int AUTOPLAY_SPEED_MS = 100;
+	private static final Color VIEW_BACKGROUND_COLOR = new Color(225, 246, 203);
 
 	public View() {
 		this.model = new SAPModel();
 		this.setBackground(VIEW_BACKGROUND_COLOR);
-		
 
 		/* Set the Layout */
 		this.setLayout(new GridBagLayout());
@@ -89,9 +89,9 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		this.add(playButton, c);
 
 		// Add gap to the left of the log
-		c.insets = new Insets(0,6,0,0);
+		c.insets = new Insets(0, 6, 0, 0);
 		logLabel = new JTextArea(1, 1);
-		logLabel.setMaximumSize(new Dimension(20,20));
+		logLabel.setMaximumSize(new Dimension(20, 20));
 		logLabel.setEditable(false);
 		c.gridx = 3;
 		c.gridy = 4;
@@ -99,13 +99,12 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		c.ipady = 350;
 		c.gridheight = 7;
 		c.fill = GridBagConstraints.VERTICAL;
-		 DefaultCaret caret = (DefaultCaret)logLabel.getCaret();
-		 caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-logLabel.setLineWrap(true);		
+		DefaultCaret caret = (DefaultCaret) logLabel.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 		JScrollPane sv = new JScrollPane(logLabel);
 		sv.setAutoscrolls(true);
-		sv.setPreferredSize(new Dimension(20,100));
-		sv.setMaximumSize(new Dimension(20,100));
+		sv.setPreferredSize(new Dimension(20, 100));
+		sv.setMaximumSize(new Dimension(20, 100));
 
 		this.add(sv, c);
 
@@ -144,5 +143,4 @@ logLabel.setLineWrap(true);
 	public void clockChange() {
 		this.welcome_label.setText("Clock: " + (sap.Clock.getClock().getStatus() ? "HIGH" : "LOW"));
 	}
-
 }

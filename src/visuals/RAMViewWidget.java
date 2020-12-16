@@ -67,7 +67,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridwidth = 9;
-		this.clearMemButton = new JButton("Clear all Memory");
+		this.clearMemButton = new JButton("Clear All Memory");
 		this.clearMemButton.setActionCommand("clearmem");
 		this.clearMemButton.addActionListener(this);
 		this.add(this.clearMemButton, c);
@@ -75,7 +75,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		c.gridx = 1;
 		c.gridy = 1;
 		c.gridwidth = 9;
-		this.showOpcodeButton = new JButton("Show OPCodes");
+		this.showOpcodeButton = new JButton("Show Operation Codes");
 		this.showOpcodeButton.setActionCommand("showopcodes");
 		this.showOpcodeButton.addActionListener(this);
 		this.add(this.showOpcodeButton, c);
@@ -210,7 +210,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		if (e.getActionCommand().contentEquals("loadcountprogram")) {
 			// Grab internal representation of RAM
 			byte[] arr = this.model.getRAM().getRAM();
-
+			
 			// First clear the memory content
 			for (int i = 0; i < 16; i++) {
 				// Set the value to 0

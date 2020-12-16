@@ -1,2 +1,4 @@
 # SAP-1
-An Emulator For Albert Paul Malvino's SAP-1 Computer
+An Emulator For Albert Paul Malvino's SAP-1 Computer made in Java Swing
+
+![](demo.gif)

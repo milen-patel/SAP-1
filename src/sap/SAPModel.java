@@ -356,7 +356,7 @@ public class SAPModel implements ClockObserver {
 				this.controlLines[MI] = true;
 				notifyControlLineChange();
 				EventLog.getEventLog()
-						.addEntry("Falling edge of cycle 1. The following control lines were set: CO, MI");
+						.addEntry("The control lines were set: CO, MI");
 			} else if (this.stepCount == 2) {
 				// If we are on cycle 2, set lines manually
 				this.resetAllControlLines();
@@ -365,7 +365,7 @@ public class SAPModel implements ClockObserver {
 				this.controlLines[II] = true;
 				notifyControlLineChange();
 				EventLog.getEventLog()
-						.addEntry("Falling edge of cycle 2. The following control lines were set: CE, RO, II");
+						.addEntry("The control lines were set: CE, RO, II");
 			} else {
 
 				// Figure out what instruction we are executing
@@ -375,19 +375,19 @@ public class SAPModel implements ClockObserver {
 					if (this.stepCount == 3) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. NOP => No control lines");
+						EventLog.getEventLog().addEntry("NOP => No control lines");
 
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. NOP => No control lines");
+						EventLog.getEventLog().addEntry("NOP => No control lines");
 
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. NOP => No control lines");
+						EventLog.getEventLog().addEntry("NOP => No control lines");
 
 					}
 				}
@@ -398,7 +398,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. LDA => IO, MI set");
+						EventLog.getEventLog().addEntry("LDA => IO, MI set");
 
 					}
 					if (this.stepCount == 4) {
@@ -406,13 +406,13 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[RO] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. LDA => RO, AI set");
+						EventLog.getEventLog().addEntry("LDA => RO, AI set");
 
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. LDA => Do nothing");
+						EventLog.getEventLog().addEntry("LDA => Do nothing");
 					}
 				}
 
@@ -422,14 +422,14 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. ADD => IO, MI set");
+						EventLog.getEventLog().addEntry("ADD => IO, MI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						this.controlLines[RO] = true;
 						this.controlLines[BI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. ADD => RO, BI set");
+						EventLog.getEventLog().addEntry("ADD => RO, BI set");
 
 					}
 					if (this.stepCount == 5) {
@@ -438,7 +438,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[FI] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. ADD => ∑O, FI, AI set");
+						EventLog.getEventLog().addEntry("ADD => ∑O, FI, AI set");
 
 					}
 				}
@@ -449,7 +449,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. SUB => IO, MI set");
+						EventLog.getEventLog().addEntry("SUB => IO, MI set");
 
 					}
 					if (this.stepCount == 4) {
@@ -457,7 +457,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[RO] = true;
 						this.controlLines[BI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. SUB => RO, BI set");
+						EventLog.getEventLog().addEntry("SUB => RO, BI set");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
@@ -466,7 +466,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[FI] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. ADD => ∑O, SU, AI, FI set");
+						EventLog.getEventLog().addEntry("ADD => ∑O, SU, AI, FI set");
 
 					}
 				}
@@ -477,20 +477,20 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. STA => IO, MI set");
+						EventLog.getEventLog().addEntry("STA => IO, MI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						this.controlLines[AO] = true;
 						this.controlLines[RI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. STA => AO, RI set");
+						EventLog.getEventLog().addEntry("STA => AO, RI set");
 
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. STA => Do nothing");
+						EventLog.getEventLog().addEntry("STA => Do nothing");
 					}
 				}
 
@@ -500,17 +500,17 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. LDI => IO, AI set");
+						EventLog.getEventLog().addEntry("LDI => IO, AI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. LDI => Do nothing");
+						EventLog.getEventLog().addEntry("LDI => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. LDI => Do nothing");
+						EventLog.getEventLog().addEntry("LDI => Do nothing");
 					}
 				}
 
@@ -520,17 +520,17 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[IO] = true;
 						this.controlLines[J] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. JMP => IO, J set");
+						EventLog.getEventLog().addEntry("JMP => IO, J set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. JMP => Do nothing");
+						EventLog.getEventLog().addEntry("JMP => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. JMP => Do nothing");
+						EventLog.getEventLog().addEntry("JMP => Do nothing");
 					}
 				}
 				if (currIns == InstructionTypes.JC) {
@@ -539,9 +539,9 @@ public class SAPModel implements ClockObserver {
 						if (this.getFlags().getCF()) {
 							this.controlLines[IO] = true;
 							this.controlLines[J] = true;
-							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JC => IO, J set since CF=1");
+							EventLog.getEventLog().addEntry("JC => IO, J set since CF=1");
 						} else {
-							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JC => IO, Do nothing since CF=0");
+							EventLog.getEventLog().addEntry("JC => IO, Do nothing since CF=0");
 						}
 						notifyControlLineChange();
 					}
@@ -549,13 +549,13 @@ public class SAPModel implements ClockObserver {
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. JC => Do nothing");
+						EventLog.getEventLog().addEntry("JC => Do nothing");
 					}
 
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. JZ => Do nothing");
+						EventLog.getEventLog().addEntry("JZ => Do nothing");
 					}
 				}
 				if (currIns == InstructionTypes.JZ) {
@@ -564,9 +564,9 @@ public class SAPModel implements ClockObserver {
 						if (this.getFlags().getZF()) {
 							this.controlLines[IO] = true;
 							this.controlLines[J] = true;
-							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JZ => IO, J set since ZF=1");
+							EventLog.getEventLog().addEntry("JZ => IO, J set since ZF=1");
 						} else {
-							EventLog.getEventLog().addEntry("Falling edge of cycle 3. JZ => Do nothing since ZF=0");
+							EventLog.getEventLog().addEntry("JZ => Do nothing since ZF=0");
 						}
 						notifyControlLineChange();
 
@@ -574,12 +574,12 @@ public class SAPModel implements ClockObserver {
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. JZ => Do nothing");
+						EventLog.getEventLog().addEntry("JZ => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. JZ => Do nothing");
+						EventLog.getEventLog().addEntry("JZ => Do nothing");
 					}
 				}
 				if (currIns == InstructionTypes.OUT) {
@@ -588,17 +588,17 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[AO] = true;
 						this.controlLines[OI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. OUT => AO, OI set");
+						EventLog.getEventLog().addEntry("OUT => AO, OI set");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. OUT => Do nothing");
+						EventLog.getEventLog().addEntry("OUT => Do nothing");
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. OUT => Do nothing");
+						EventLog.getEventLog().addEntry("OUT => Do nothing");
 					}
 				}
 				if (currIns == InstructionTypes.HLT) {
@@ -606,7 +606,7 @@ public class SAPModel implements ClockObserver {
 						this.resetAllControlLines();
 						this.controlLines[HLT] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. HLT => HLT set");
+						EventLog.getEventLog().addEntry("HLT => HLT set");
 
 					}
 					// No need to handle stepCount 4 and 5 since the clock can no longer advance
@@ -616,18 +616,18 @@ public class SAPModel implements ClockObserver {
 					if (this.stepCount == 3) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 3. Invalid Instruction => Do nothing");
+						EventLog.getEventLog().addEntry("Invalid Instruction => Do nothing");
 					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 4. Invalid Instruction => Do nothing");
+						EventLog.getEventLog().addEntry("Invalid Instruction => Do nothing");
 
 					}
 					if (this.stepCount == 5) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("Falling edge of cycle 5. Invalid Instruction => Do nothing");
+						EventLog.getEventLog().addEntry("Invalid Instruction => Do nothing");
 					}
 				}
 			}
