@@ -17,6 +17,13 @@ After building this computer on a breadboard following Ben Eater's tutorials ([m
 
 ## Getting Start
 ## Example Programs
+Here is the counting program included in the simulator. Notice that the program will run indefinetly since there is no HLT command provided. 
+		LDI 1
+		ADD 14
+		OUT
+		STA 10
+		JMP 1
+		[14] 0b00000001
 
 ### Operation Codes
 | OPCode      |  Binary Value |

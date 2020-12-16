@@ -547,11 +547,15 @@ public class SAPModel implements ClockObserver {
 				this.notifyBusChange();
 				EventLog.getEventLog().addEntry("A register value put onto bus");
 			}
+			if (this.controlLines[SU]) {
+				this.notifyAChange();
+			}
 			if (this.controlLines[SO]) {
 				this.bus.loadVal(this.adder.ALUOut(this.controlLines[SU]));
 				this.notifyBusChange();
 				EventLog.getEventLog().addEntry("ALU sum value put onto bus");
 			}
+			
 			return;
 
 		} else {
