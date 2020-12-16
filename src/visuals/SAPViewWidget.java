@@ -11,8 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import interfaces.SAPObserver;
 import sap.SAPModel.RegisterType;
-import sap.SAPObserver;
 
 public class SAPViewWidget extends JPanel implements SAPObserver {
 	private sap.SAPModel model;
@@ -51,7 +51,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	public SAPViewWidget(sap.SAPModel model) {
 		// Encapsulate the model
 		this.model = model;
-		this.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 
 		// Add ourselves as a model observer
@@ -294,11 +294,11 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		// Show Flags
 		c.gridy = 20;
 		c.gridx = 1;
-		this.cFlag = new JButton(this.model.getFlags().getCF() ? "C" : "-C");
+		this.cFlag = new JButton(this.model.getFlags().getCF() ? "C: 1" : "C: 0");
 		this.cFlag.setPreferredSize(BUTTON_SIZE);
 		this.add(this.cFlag, c);
 		c.gridx = 2;
-		this.zFlag = new JButton(this.model.getFlags().getZF() ? "Z" : "-Z");
+		this.zFlag = new JButton(this.model.getFlags().getZF() ? "Z: 1" : "Z: 0");
 		this.zFlag.setPreferredSize(BUTTON_SIZE);
 		this.add(this.zFlag, c);
 		// TODO del
@@ -386,8 +386,8 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 
 	@Override
 	public void flagChange() {
-		this.zFlag.setText(this.model.getFlags().getZF() ? "Z" : "-Z");
-		this.cFlag.setText(this.model.getFlags().getCF() ? "C" : "-C");
+		this.zFlag.setText(this.model.getFlags().getZF() ? "Z: 1" : "Z: 0");
+		this.cFlag.setText(this.model.getFlags().getCF() ? "C: 1" : "C: 0");
 	}
 
 	@Override

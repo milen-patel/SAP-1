@@ -3,6 +3,8 @@ package sap;
 import java.util.ArrayList;
 import java.util.List;
 
+import interfaces.LogObserver;
+
 /* The event log is responsible for encapsulating information about significant changes made in the model class
  * The event log is displayed to the user since the View class is-a LogObserver
  * The event log has been created as a singleton, meaning that only one instance of the class can ever exist

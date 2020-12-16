@@ -15,8 +15,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import sap.SAPModel;
-
-public class View extends JPanel implements sap.LogObserver, ActionListener, sap.ClockObserver {
+import javax.swing.text.DefaultCaret;
+public class View extends JPanel implements interfaces.LogObserver, ActionListener, interfaces.ClockObserver {
 
 	private SAPModel model;
 	private JLabel welcome_label;
@@ -91,15 +91,23 @@ public class View extends JPanel implements sap.LogObserver, ActionListener, sap
 		// Add gap to the left of the log
 		c.insets = new Insets(0,6,0,0);
 		logLabel = new JTextArea(1, 1);
+		logLabel.setMaximumSize(new Dimension(20,20));
 		logLabel.setEditable(false);
 		c.gridx = 3;
 		c.gridy = 4;
-		c.ipadx = 220;
+		c.ipadx = 240;
 		c.ipady = 350;
 		c.gridheight = 7;
 		c.fill = GridBagConstraints.VERTICAL;
+		 DefaultCaret caret = (DefaultCaret)logLabel.getCaret();
+		 caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		
+		JScrollPane sv = new JScrollPane(logLabel);
+		sv.setAutoscrolls(true);
+		sv.setPreferredSize(new Dimension(20,100));
+		sv.setMaximumSize(new Dimension(20,100));
 
-		this.add(new JScrollPane(logLabel), c);
+		this.add(sv, c);
 
 		// Add the view as a log observer
 		sap.EventLog.getEventLog().addObserver(this);

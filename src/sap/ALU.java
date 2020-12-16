@@ -1,5 +1,7 @@
 package sap;
 
+import interfaces.Register;
+
 public class ALU {
 	Register regA;
 	Register regB;

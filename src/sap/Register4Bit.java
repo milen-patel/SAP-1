@@ -1,5 +1,7 @@
 package sap;
 
+import interfaces.Register;
+
 public class Register4Bit implements Register {
 
 	private byte content;

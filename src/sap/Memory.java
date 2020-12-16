@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import interfaces.RAMObserver;
+import interfaces.Register;
+
 public class Memory {
 	private byte[] data;
 	private Register MAR;

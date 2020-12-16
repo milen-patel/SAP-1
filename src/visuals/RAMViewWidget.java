@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 
 import sap.EventLog;
 
-public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionListener {
+public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, ActionListener {
 	private sap.SAPModel model;
 	private GridBagConstraints c;
 	private JButton[][] butts;
@@ -79,6 +79,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		this.showOpcodeButton.setActionCommand("showopcodes");
 		this.showOpcodeButton.addActionListener(this);
 		this.add(this.showOpcodeButton, c);
+
 
 		c.gridx = 1;
 		c.gridy = 2;

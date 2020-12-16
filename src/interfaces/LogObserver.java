@@ -1,4 +1,4 @@
-package sap;
+package interfaces;
 
 public interface LogObserver {
 	/*

@@ -3,6 +3,8 @@ package sap;
 import java.util.ArrayList;
 import java.util.List;
 
+import interfaces.ClockObserver;
+
 /* Singleton clock */
 public class Clock {
 	private boolean status;

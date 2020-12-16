@@ -1,6 +1,11 @@
 package sap;
 
 import java.util.List;
+
+import interfaces.ClockObserver;
+import interfaces.Register;
+import interfaces.SAPObserver;
+
 import java.util.ArrayList;
 
 public class SAPModel implements ClockObserver {
