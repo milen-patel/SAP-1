@@ -20,6 +20,7 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	private JButton clearMemButton;
 	private JButton showOpcodeButton;
 	private JButton countingProgramButton;
+	private JButton analyzeProgramButton;
 
 	private static Dimension buttonSize = new Dimension(20, 20);
 	private static Color COLOR_ON = new Color(124, 248, 42);

@@ -1,8 +1,8 @@
 package sap;
 
 public class RegisterFlags {
-	boolean zeroFlag;
-	boolean carryFlag;
+	private boolean zeroFlag;
+	private boolean carryFlag;
 
 	public RegisterFlags() {
 		this.zeroFlag = false;

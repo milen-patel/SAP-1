@@ -328,7 +328,6 @@ public class SAPModel implements ClockObserver {
 
 				if (currIns == InstructionTypes.LDA) {
 					if (this.stepCount == 3) {
-						System.out.println("made it ");
 						this.resetAllControlLines();
 						this.controlLines[IO] = true;
 						this.controlLines[MI] = true;
@@ -464,9 +463,20 @@ public class SAPModel implements ClockObserver {
 				if (currIns == InstructionTypes.JC) { // TODO
 					if (this.stepCount == 3) {
 						this.resetAllControlLines();
-						notifyControlLineChange();
+						if (this.getFlags().getCF()) {
+							this.controlLines[IO] = true;
+							this.controlLines[J] = true;
+							System.out.println("C");
 
+						} else {
+							System.out.println("D");
+						}
+
+						notifyControlLineChange();
+					} else {
+						// Add to log
 					}
+					
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
@@ -481,9 +491,18 @@ public class SAPModel implements ClockObserver {
 				if (currIns == InstructionTypes.JZ) { // TODO
 					if (this.stepCount == 3) {
 						this.resetAllControlLines();
+						if (this.getFlags().getZF()) {
+							this.controlLines[IO] = true;
+							this.controlLines[J] = true;
+							System.out.println("A");
+
+						} else {
+							System.out.println("B");
+
+						}
 						notifyControlLineChange();
 
-					}
+					} 
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();

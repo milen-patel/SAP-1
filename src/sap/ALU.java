@@ -58,11 +58,11 @@ public class ALU {
 	}
 
 	public boolean getZeroFlag() {
-		return this.regFlags.zeroFlag;
+		return this.regFlags.getZF();
 	}
 
 	public boolean getCarryFlag() {
-		return this.regFlags.carryFlag;
+		return this.regFlags.getCF();
 	}
 
 }
