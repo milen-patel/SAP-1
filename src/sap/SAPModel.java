@@ -242,6 +242,10 @@ public class SAPModel implements ClockObserver {
 		instructionVal = (byte) (instructionVal & 0b11110000);
 
 		// Analyze the value
+		return decodeInstructionHelper(instructionVal);
+	}
+
+	private InstructionTypes decodeInstructionHelper(byte instructionVal) {
 		switch (instructionVal) {
 		case 0b00000000:
 			return InstructionTypes.NOP;
@@ -268,6 +272,64 @@ public class SAPModel implements ClockObserver {
 		default:
 			return InstructionTypes.INVALID;
 		}
+	}
+
+	public void analyzeInstruction(byte address) {
+		// Start constructing entry for the log
+		String logVal = "[" + address + "]\t";
+
+		// First, add the instruction to logVal
+		byte instructionVal = (byte) (this.getRAM().getRAM()[address] & 0b11110000);
+		InstructionTypes t = decodeInstructionHelper(instructionVal);
+		switch (t) {
+		case NOP:
+			logVal += "NOP";
+			break;
+		case LDA:
+			logVal += "LDA";
+			break;
+		case ADD:
+			logVal += "ADD";
+			break;
+		case SUB:
+			logVal += "SUB";
+			break;
+		case STA:
+			logVal += "STA";
+			break;
+		case LDI:
+			logVal += "LDI";
+			break;
+		case JMP:
+			logVal += "JMP";
+			break;
+		case JC:
+			logVal += "JC";
+			break;
+		case JZ:
+			logVal += "JZ";
+			break;
+		case OUT:
+			logVal += "OUT";
+			break;
+		case HLT:
+			logVal += "HLT";
+			break;
+		default:
+			logVal += "N/A";
+		}
+
+		// Then, add the argument to logVal
+		logVal += " ";
+		if (t != InstructionTypes.NOP && t != InstructionTypes.INVALID) {
+			logVal += this.getRAM().getRAM()[address] & 0b00001111;
+		}
+		
+		// Finally, add decimal value
+		logVal += "\t" + this.getRAM().getRAM()[address];
+		
+		// Add final parsed string to the event log
+		EventLog.getEventLog().addEntry(logVal);
 	}
 
 	@Override
@@ -303,7 +365,7 @@ public class SAPModel implements ClockObserver {
 
 				// Figure out what instruction we are executing
 				InstructionTypes currIns = this.decodeIR();
-				//System.out.println(currIns);
+				// System.out.println(currIns);
 
 				if (currIns == InstructionTypes.NOP) {
 					if (this.stepCount == 3) {
@@ -476,7 +538,7 @@ public class SAPModel implements ClockObserver {
 					} else {
 						// Add to log
 					}
-					
+
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
@@ -502,7 +564,7 @@ public class SAPModel implements ClockObserver {
 						}
 						notifyControlLineChange();
 
-					} 
+					}
 					if (this.stepCount == 4) {
 						this.resetAllControlLines();
 						notifyControlLineChange();
@@ -592,7 +654,6 @@ public class SAPModel implements ClockObserver {
 				this.notifyBusChange(); // TODO make sure this wont be problematic
 			}
 			// todo bus is empty when an out flag goes off
-	
 
 			return;
 
@@ -641,7 +702,7 @@ public class SAPModel implements ClockObserver {
 				this.programCounter.loadVal((byte) (this.bus.getVal() & 0b1111));
 				this.notifyPCChange();
 			}
-			
+
 		}
 
 	}

@@ -84,6 +84,14 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 		this.countingProgramButton.setActionCommand("loadcountprogram");
 		this.countingProgramButton.addActionListener(this);
 		this.add(this.countingProgramButton, c);
+		
+		c.gridx = 1;
+		c.gridy = 3;
+		c.gridwidth = 9;
+		this.analyzeProgramButton = new JButton("Analyze Program");
+		this.analyzeProgramButton.setActionCommand("analyzeProgram");
+		this.analyzeProgramButton.addActionListener(this);
+		this.add(this.analyzeProgramButton, c);
 
 		// Reset constraint parameters
 		c.gridwidth = 1;
@@ -151,6 +159,15 @@ public class RAMViewWidget extends JPanel implements sap.RAMObserver, ActionList
 	// Responds to button click indicating a bit change in memory
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().contentEquals("analyzeProgram")) {
+			EventLog.getEventLog().addEntry("=============");
+			EventLog.getEventLog().addEntry("[ADDRESS]\t[INSTR]\t[DEC]");
+			for (byte i = 0; i < 16; i++) {
+				this.model.analyzeInstruction(i);
+			}
+			EventLog.getEventLog().addEntry("=============");
+			return;
+		}
 		if (e.getActionCommand().contentEquals("clearmem")) {
 			// Get the contents of memory
 			byte[] arr = this.model.getRAM().getRAM();
