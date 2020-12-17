@@ -24,7 +24,7 @@ A super trivial program is given below. A NOP (no operation) followed by a halt;
 [1] HLT
 ```
 
-Here is the counting program included in the simulator. Notice that the program will run indefinetly since there is no HLT command provided. This will load the constant 1 into the A register; then it will continually increment the contents of the A register by 1, display it in the output register, and store the same value in memory.  
+Here is the counting program included in the simulator. Notice that the program will run indefinetly since there is no HLT command provided. This will load the constant 1 into the A register; then it will continually increment the contents of the A register by 1, display it in the output register, and store the same value in memory.    
 ```
 [0] LDI 1
 [1] ADD 14
@@ -57,7 +57,7 @@ A program is included to show conditional branching. We load the value stored in
 [15] 32
 ```
 
-The computer also has the ability to conditionally branch if the last ALU operation overflowed. Below is a basic example that causes the ALU to overflow, followed by a JC command.
+The computer also has the ability to conditionally branch if the last ALU operation overflowed. Below is a basic example that causes the ALU to overflow, followed by a JC command. If the JC executes successfully (and assuming the carry flag is set), the program halts. However, if the carry flag is not set, then the program will enter an easily detectable infinite loop.
 ```
 [0] LDA 15
 [1] ADD 14
