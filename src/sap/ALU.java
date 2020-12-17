@@ -18,10 +18,17 @@ public class ALU {
 	// Updates the flags register based on the current ALU value
 	public void flagsIn(boolean sub) {
 		boolean zF, cF;
-		
+
 		// Compute the zero flag
-		int result = (0b00000000000000000000000011111111 & this.regA.getVal())
-				+ (0b00000000000000000000000011111111 & this.regB.getVal());
+		int result;
+		if (sub) {
+			result = (0b00000000000000000000000011111111 & this.regA.getVal())
+					- (0b00000000000000000000000011111111 & this.regB.getVal());
+		} else {
+			result = (0b00000000000000000000000011111111 & this.regA.getVal())
+					+ (0b00000000000000000000000011111111 & this.regB.getVal());
+		}
+
 		if ((result & 0b11111111) == 0) {
 			zF = true;
 		} else {

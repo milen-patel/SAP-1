@@ -216,7 +216,7 @@ public class SAPModel implements ClockObserver {
 
 		// Then, add the argument to logVal
 		logVal += " ";
-		if (t != InstructionTypes.NOP && t != InstructionTypes.INVALID) {
+		if (t != InstructionTypes.NOP && t != InstructionTypes.INVALID && t != InstructionTypes.HLT && t != InstructionTypes.OUT) {
 			logVal += this.getRAM().getRAM()[address] & 0b00001111;
 		}
 
@@ -358,7 +358,7 @@ public class SAPModel implements ClockObserver {
 						this.controlLines[FI] = true;
 						this.controlLines[AI] = true;
 						notifyControlLineChange();
-						EventLog.getEventLog().addEntry("ADD => ∑O, SU, AI, FI set");
+						EventLog.getEventLog().addEntry("SUB => ∑O, SU, AI, FI set");
 
 					}
 				}

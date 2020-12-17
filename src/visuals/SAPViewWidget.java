@@ -347,7 +347,6 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	}
 
 	// If A/B register changes or SUB flag changes, repaint
-	// TODO make sure that SUB flag change updates the ALU
 	private void updateALU() {
 		for (int i = 0; i <= 7; i++) {
 			aluBits[i].setText(decodeRegister(RegisterType.ALU, 7 - i));

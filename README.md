@@ -1,8 +1,10 @@
 # SAP-1
 A simulator For Albert Paul Malvino's SAP-1 Computer made in Java Swing.
 
-After building this computer on a breadboard following Ben Eater's tutorials ([my build running](https://github.com/milen-patel/BreadboardCPU)), I decided to build this simulator. Visually appealing? No. Functional? Yes.
+After building this computer on a breadboard following Ben Eater's tutorials ([my build running](https://github.com/milen-patel/BreadboardCPU)), I decided to build this simulator. Visually appealing? No. Functional? Yes. 
 ![](demo.gif)
+
+To test it out yourself, clone the project and compile it. A Java Runtime Environment is required to run this simulator.
 
 ## Features
 - **Clock Toggle**: Almost all of the components in SAP-1 are linked together via a system clock. This simulator has a button that can toggle the clock from low to high, or vice versa (as a result, each full clock cycle requires two presses of this button for a rising edge and falling edge).  
@@ -15,9 +17,14 @@ After building this computer on a breadboard following Ben Eater's tutorials ([m
 - **Load Counting Program**: Loads a counting program in memory that infinitely increments the A register.  
 - **Analyze Program**: Translates the current memory content into a more readable form in the SAP Instruction Set, displays the readable version in the Event Log.  
 
-## Getting Start
 ## Example Programs
-Here is the counting program included in the simulator. Notice that the program will run indefinetly since there is no HLT command provided. 
+A super trivial program is given below. A NOP (no operation) followed by a halt; the computer will essentially do nothing in the 8 clock cycles (5 for NOP + 3 for HLT) it takes to execute. This is useful to trace through and see the handling of instructions.  
+```
+[0] NOP
+[1] HLT
+```
+
+Here is the counting program included in the simulator. Notice that the program will run indefinetly since there is no HLT command provided. This will load the constant 1 into the A register; then it will continually increment the contents of the A register by 1, display it in the output register, and store the same value in memory.  
 ```
 [0] LDI 1
 [1] ADD 14
@@ -27,6 +34,31 @@ Here is the counting program included in the simulator. Notice that the program 
 [14] 0b00000001
 ```
 
+This is another basic program that demonstrates the LDI, ADD, SUB, OUT, and HLT instructions. This will load the constant 2 into the A register, add 1 to it (result = 3). Then it will subtract 2 (result = 1), store that value in the output register, and then halt.  
+```
+[0] LDI 2
+[1] ADD 15
+[2] SUB 14
+[3] OUT
+[4] HLT
+[14] 2
+[15] 1
+```
+
+A final program is included to show conditional branching. We load the value stored in memory at address 15 into A, and then subtract that same value from A. The value stored at address 15 in memory is useless since any number minus itself equals 0. After we subtract in step 1, we expect the zero flag to be set. Instruction 2 says to branch to insutrction 10 if the zero flag is set, and since 10 is a halt, the program will finish execution. We know this to be the case, so we would expect this to be the path that the computer takes. However, if the JZ is not executed, the program is set to display a 1 in the output register before halting, for demonstration purposes. If you changed the arguement of the SUB command on the second line to yield a non-zero result, this is the path that the computer would follow.  
+```
+[0] LDA 15
+[1] SUB 15
+[2] JZ 10
+[3] LDI 1
+[4] OUT 
+[5] JMP 10
+[10] HLT
+[15] 32
+```
+
+
+The sample programs included above are brief and are intended to show off some of the instructions; however, there are more instructions not covered in the examples that allow more complex programs to be written. A full table of operation codes and their binary values are listed below. Note that each operation code is 4 bits, but we don't have 16 instructions; so, it is possible (and not too dificult) to add more instructions to our architecture if we wanted.   
 ### Operation Codes
 | OPCode      |  Binary Value |
 | ----------- | -----------   |
