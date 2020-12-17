@@ -45,7 +45,7 @@ This is another basic program that demonstrates the LDI, ADD, SUB, OUT, and HLT 
 [15] 1
 ```
 
-A final program is included to show conditional branching. We load the value stored in memory at address 15 into A, and then subtract that same value from A. The value stored at address 15 in memory is useless since any number minus itself equals 0. After we subtract in step 1, we expect the zero flag to be set. Instruction 2 says to branch to insutrction 10 if the zero flag is set, and since 10 is a halt, the program will finish execution. We know this to be the case, so we would expect this to be the path that the computer takes. However, if the JZ is not executed, the program is set to display a 1 in the output register before halting, for demonstration purposes. If you changed the arguement of the SUB command on the second line to yield a non-zero result, this is the path that the computer would follow.  
+A program is included to show conditional branching. We load the value stored in memory at address 15 into A, and then subtract that same value from A. The value stored at address 15 in memory is useless since any number minus itself equals 0. After we subtract in step 1, we expect the zero flag to be set. Instruction 2 says to branch to insutrction 10 if the zero flag is set, and since 10 is a halt, the program will finish execution. We know this to be the case, so we would expect this to be the path that the computer takes. However, if the JZ is not executed, the program is set to display a 1 in the output register before halting, for demonstration purposes. If you changed the arguement of the SUB command on the second line to yield a non-zero result, this is the path that the computer would follow.  
 ```
 [0] LDA 15
 [1] SUB 15
@@ -57,9 +57,20 @@ A final program is included to show conditional branching. We load the value sto
 [15] 32
 ```
 
+The computer also has the ability to conditionally branch if the last ALU operation overflowed. Below is a basic example that causes the ALU to overflow, followed by a JC command.
+```
+[0] LDA 15
+[1] ADD 14
+[2] JC 4
+[3] JMP 0
+[4] HLT
+[14] 0b00000001
+[15] 0b11111111
+```
 
-The sample programs included above are brief and are intended to show off some of the instructions; however, there are more instructions not covered in the examples that allow more complex programs to be written. A full table of operation codes and their binary values are listed below. Note that each operation code is 4 bits, but we don't have 16 instructions; so, it is possible (and not too dificult) to add more instructions to our architecture if we wanted.   
+
 ### Operation Codes
+The sample programs included above are brief and are intended to show off some of the instructions; however, there are more instructions not covered in the examples that allow more complex programs to be written. A full table of operation codes and their binary values are listed below. Note that each operation code is 4 bits, but we don't have 16 instructions; so, it is possible (and not too dificult) to add more instructions to our architecture if we wanted.   
 | OPCode      |  Binary Value |
 | ----------- | -----------   |
 | NOP      	  | 0000          |
