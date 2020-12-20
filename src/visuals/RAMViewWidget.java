@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -22,6 +23,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton showOpcodeButton;
 	private JButton countingProgramButton;
 	private JButton analyzeProgramButton;
+	private JButton assemblerButton;
 
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
@@ -93,6 +95,15 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.analyzeProgramButton.setActionCommand("analyzeProgram");
 		this.analyzeProgramButton.addActionListener(this);
 		this.add(this.analyzeProgramButton, c);
+		
+		// Add the assembler button
+		c.gridx = 1;
+		c.gridy = 4;
+		c.gridwidth = 9;
+		this.assemblerButton = new JButton("Assembler");
+		this.assemblerButton.setActionCommand("openAssembler");
+		this.assemblerButton.addActionListener(this);
+		this.add(this.assemblerButton, c);
 
 		// Add label above RAM content
 		c.gridx = 3;
@@ -169,6 +180,26 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	@Override
 	// Responds to button click indicating a bit change in memory
 	public void actionPerformed(ActionEvent e) {
+		// If the user wants to open the assembler
+		if (e.getActionCommand().contentEquals("openAssembler")) {
+			System.out.println("Assembler");
+			Assembler view = new Assembler(this.model);
+
+			// Create a frame and add the view to it 
+			JFrame main_frame = new JFrame();
+			main_frame.setTitle("SAP-1 Simulator by Milen Patel");
+			main_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			main_frame.setContentPane(view);
+
+			// Lock in dimensions 
+			main_frame.setPreferredSize(new Dimension(2318/3, 1600/3));
+			main_frame.setResizable(false);
+
+			// Make the frame visible 
+			main_frame.pack();
+			main_frame.setVisible(true);
+			return;
+		}
 		// If the user clicks the analyze program button
 		if (e.getActionCommand().contentEquals("analyzeProgram")) {
 			EventLog.getEventLog().addEntry("=============");
