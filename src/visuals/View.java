@@ -56,7 +56,7 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		this.add(viewWidget, c);
 
 		// Add the RAM View Widget
-		this.ramWidget = new RAMViewWidget(this.model);
+		this.ramWidget = new RAMViewWidget(this.model, this);
 		c.gridx = 0;
 		c.gridy = 0;
 		this.add(ramWidget, c);

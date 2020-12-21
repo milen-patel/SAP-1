@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import sap.EventLog;
+import sap.Runner;
 
 public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, ActionListener {
 	// Widget components
@@ -24,6 +25,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton countingProgramButton;
 	private JButton analyzeProgramButton;
 	private JButton assemblerButton;
+	private JPanel parentPanel;
 
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
@@ -32,8 +34,11 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private static final Color COLOR_OFF = new Color(34, 82, 20);
 	private static final Color COLOR_BACKGROUND = new Color(225, 246, 203);
 
-	public RAMViewWidget(sap.SAPModel model) {
+	public RAMViewWidget(sap.SAPModel model, JPanel parentPanel) {
+		// Store what we need to maintain
+		this.parentPanel = parentPanel;
 		this.model = model;
+		
 		// Add ourselves as a RAMObserver
 		this.model.getRAM().addRAMObserver(this);
 
@@ -95,7 +100,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.analyzeProgramButton.setActionCommand("analyzeProgram");
 		this.analyzeProgramButton.addActionListener(this);
 		this.add(this.analyzeProgramButton, c);
-		
+
 		// Add the assembler button
 		c.gridx = 1;
 		c.gridy = 4;
@@ -182,22 +187,14 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	public void actionPerformed(ActionEvent e) {
 		// If the user wants to open the assembler
 		if (e.getActionCommand().contentEquals("openAssembler")) {
-			System.out.println("Assembler");
-			Assembler view = new Assembler(this.model);
+			// Create instance of the assembler
+			Assembler view = new Assembler(this.model, this.parentPanel);
 
-			// Create a frame and add the view to it 
-			JFrame main_frame = new JFrame();
-			main_frame.setTitle("SAP-1 Simulator by Milen Patel");
-			main_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			main_frame.setContentPane(view);
+			// Set the view to the assembler (of the current window)
+			Runner.main_frame.setContentPane(view);
+			Runner.main_frame.pack();
+			Runner.main_frame.setVisible(true);
 
-			// Lock in dimensions 
-			main_frame.setPreferredSize(new Dimension(2318/3, 1600/3));
-			main_frame.setResizable(false);
-
-			// Make the frame visible 
-			main_frame.pack();
-			main_frame.setVisible(true);
 			return;
 		}
 		// If the user clicks the analyze program button

@@ -11,9 +11,13 @@ import java.sql.ResultSet;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import sap.Runner;
 import sap.SAPModel;
+import sap.SAPModel.InstructionTypes;
+
 import java.util.*;
 import javax.swing.JLabel;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
 public class Assembler extends JPanel implements ActionListener {
@@ -24,8 +28,10 @@ public class Assembler extends JPanel implements ActionListener {
 	private JLabel outputField;
 	private JButton assembleButton;
 	private JButton sendToSapButton;
+	private JButton exitButton;
 	private SAPModel model;
-
+	private JPanel returnPanel;
+	
 	// Define constants
 	private static final int SCREEN_X = 2318 / 3;
 	private static final int SCREEN_Y = 1600 / 3;
@@ -34,9 +40,10 @@ public class Assembler extends JPanel implements ActionListener {
 	private static final Color BACKGROUND_COLOR = Color.WHITE;
 	private static final char ASSEMBLER_COMMENT_SYMBOL = '#';
 
-	public Assembler(SAPModel model) {
-		// Encapsulate SAP Model
+	public Assembler(SAPModel model, JPanel returnPanel) {
+		// Encapsulate SAP Model and return view
 		this.model = model;
+		this.returnPanel = returnPanel;
 
 		// Set preferred size and color
 		this.setPreferredSize(WIDGET_SIZE);
@@ -54,6 +61,8 @@ public class Assembler extends JPanel implements ActionListener {
 		this.inputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
 		this.inputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
 		this.inputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
+	    this.inputField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
 		c.gridx = 0;
 		c.gridy = 0;
 		this.add(this.inputField, c);
@@ -92,6 +101,14 @@ public class Assembler extends JPanel implements ActionListener {
 		c.gridx = 2;
 		c.gridy = 1;
 		this.add(new JButton("Decompile current program"), c);
+		
+		// Add the exit button
+		c.gridx = 3;
+		c.gridy = 1;
+		this.exitButton = new JButton("Exit");
+		this.exitButton.setActionCommand("exit");
+		this.exitButton.addActionListener(this);
+		this.add(this.exitButton, c);
 	}
 
 	@Override
@@ -104,6 +121,12 @@ public class Assembler extends JPanel implements ActionListener {
 		if (e.getActionCommand().contentEquals("sendtosap")) {
 			this.outputField.setText("Sending to sap...");
 			return;
+		}
+		if (e.getActionCommand().contentEquals("exit")) {
+			Runner.main_frame.setContentPane(this.returnPanel);
+			Runner.main_frame.pack();
+			Runner.main_frame.setVisible(true);
+
 		}
 	}
 
@@ -146,6 +169,59 @@ public class Assembler extends JPanel implements ActionListener {
 			result.set(i, result.get(i).replaceAll("\\s+", ""));
 		}
 
+		// Parse variables
+		Map<String, String> varValLookup = new TreeMap<String, String>();
+		Map<String, Integer> varAddressLookup = new TreeMap<String, Integer>();
+		Set<String> deletionIndices = new HashSet<String>();
+		int nextAddress = 15;
+
+		for (int i = 0; i < result.size(); i++) {
+			// Grab the current instruction
+			String curr = result.get(i);
+
+			// Is the current instruction a variable declaration
+			if (curr.indexOf("LET") == 0) {
+				// Make sure it is a valid definition
+				if (curr.indexOf("=") == -1 || curr.indexOf("=") == 3 || curr.length() == 4) {
+					return "<html>[Assembler Failed] Invalid variable declaration: " + curr + ".</html>";
+				}
+				String varName = curr.substring(3, curr.indexOf("="));
+				String varVal = curr.substring(curr.indexOf("=") + 1);
+
+				// Make sure name is strictly alphabetical
+				for (int j = 0; j < varName.length(); j++) {
+					if (varName.charAt(j) >= '0' && varName.charAt(j) <= '9') {
+						return "<html>[Assembler Failed] Variable names cannot contain numbers.</html>";
+					}
+				}
+
+				// Make sure variable value is valid
+				if (!isValidBinaryString(varVal)) {
+					return "<html>[Assembler Failed] Invalid variable value '" + varVal + "'.</html>";
+				}
+
+				if (varVal.length() == 0) {
+					return "<html>[Assembler Failed] All variables must be defined with a value</html>";
+				}
+
+				// Check for duplicate variable declaration
+				for (String s : varValLookup.keySet()) {
+					if (s.contentEquals(varName)) {
+						return "<html>[Assembler Failed] Duplicate variable declaration of '" + s + "'.</html>";
+					}
+				}
+				// Add to the map
+				varValLookup.put(varName, varVal);
+				varAddressLookup.put(varName, nextAddress--);
+				deletionIndices.add(curr);
+			}
+		}
+
+		// Remove variable declarations from program
+		for (String i : deletionIndices) {
+			result.remove(i);
+		}
+
 		// Parse labels
 		Map<String, Integer> labelLookup = new TreeMap<String, Integer>();
 
@@ -178,7 +254,7 @@ public class Assembler extends JPanel implements ActionListener {
 		}
 
 		// Validate we have enough memory for the program
-		if (result.size() > 16) {
+		if (result.size() + deletionIndices.size() > 16) {
 			return "<html>[Assembler Failed] Cannot compile program into 16 bytes.</html>";
 		}
 
@@ -227,18 +303,186 @@ public class Assembler extends JPanel implements ActionListener {
 				}
 			}
 		}
-		
+
+		String[] rArr = new String[16];
+
+		// Add variables to memory
+		for (String v : varAddressLookup.keySet()) {
+			rArr[varAddressLookup.get(v)] = varValLookup.get(v);
+		}
+
 		// convert each instruction to machine code
 		for (int i = 0; i < result.size(); i++) {
 			// Grab the current instruction
 			String curr = result.get(i);
-			
+
+			// Add binary value
+			InstructionTypes iVal = parseInstruction(curr);
+			switch (iVal) {
+			case NOP:
+				rArr[i] = "00000000";
+				break;
+			case LDA:
+				rArr[i] = "0001";
+				if (curr.length() == 3) {
+					return "<html>[Assembler Failed] LDA Missing Arguement</html>";
+				}
+				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
+					System.out.println("A");
+					return "<html>[Assembler Failed] Missing variable.</html>";
+				}
+				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				break;
+			case ADD:
+				rArr[i] = "0010";
+				if (curr.length() == 3) {
+					return "<html>[Assembler Failed] ADD Missing Arguement</html>";
+				}
+				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
+					System.out.println("B");
+					return "<html>[Assembler Failed] Missing variable.</html>";
+				}
+				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				break;
+			case SUB:
+				rArr[i] = "0011";
+				if (curr.length() == 3) {
+					return "<html>[Assembler Failed] SUB Missing Arguement</html>";
+				}
+				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
+					System.out.println("C");
+					return "<html>[Assembler Failed] Missing variable.</html>";
+				}
+				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				break;
+			case STA:
+				rArr[i] = "0100";
+				if (curr.length() == 3) {
+					return "<html>[Assembler Failed] STA Missing Arguement</html>";
+				}
+				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
+					System.out.println("D");
+					return "<html>[Assembler Failed] Missing variable.</html>";
+				}
+				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				break;
+			case LDI:
+				rArr[i] = "0101";
+				if (curr.length() != 7) {
+					return "<html>[Assembler Failed] LDI Invalid Arguement</html>";
+				}
+				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
+					System.out.println("D");
+					return "<html>[Assembler Failed] Missing variable.</html>";
+				}
+				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				break;
+			case JMP:
+				rArr[i] = "0110";
+				break;
+			case JC:
+				rArr[i] = "0111";
+				break;
+			case JZ:
+				rArr[i] = "1000";
+				break;
+			case OUT:
+				rArr[i] = "11100000";
+				break;
+			case HLT:
+				rArr[i] = "11110000";
+				break;
+			default:
+				rArr[i] = "N/A";
+			}
+
 		}
 
 		rVal = "<html>";
-		for (int i = 0; i < result.size(); i++) {
-			rVal += result.get(i) + "<br>";
+		for (int i = 0; i < rArr.length; i++) {
+			rVal += i + ": " + (rArr[i] == null ? "XXXXXXXX" : rArr[i]) + "<br>";
 		}
 		return rVal + "</html>";
+	}
+
+	private InstructionTypes parseInstruction(String curr) {
+		if (curr.indexOf("ADD") != -1) {
+			return InstructionTypes.ADD;
+		} else if (curr.indexOf("SUB") != -1) {
+			return InstructionTypes.SUB;
+		} else if (curr.indexOf("NOP") != -1) {
+			return InstructionTypes.NOP;
+		} else if (curr.indexOf("LDA") != -1) {
+			return InstructionTypes.LDA;
+		} else if (curr.indexOf("STA") != -1) {
+			return InstructionTypes.STA;
+		} else if (curr.indexOf("LDI") != -1) {
+			return InstructionTypes.LDI;
+		} else if (curr.indexOf("JMP") != -1) {
+			return InstructionTypes.JMP;
+		} else if (curr.indexOf("JZ") != -1) {
+			return InstructionTypes.JZ;
+		} else if (curr.indexOf("JC") != -1) {
+			return InstructionTypes.JC;
+		} else if (curr.indexOf("OUT") != -1) {
+			return InstructionTypes.OUT;
+		} else if (curr.indexOf("HLT") != -1) {
+			return InstructionTypes.HLT;
+		}
+		return InstructionTypes.INVALID;
+	}
+
+	private boolean isValidBinaryString(String value) {
+		for (int i = 0; i < value.length(); i++) {
+			int tempB = value.charAt(i);
+			if (tempB != '0' && tempB != '1') {
+				return false;
+			}
+		}
+		// no failures, so
+		return true;
+	}
+
+	private String argToBinary(String arg, Map<String, Integer> varAddressLookup) {
+		if (arg == null || arg.length() == 0) {
+			return "";
+		}
+
+		// Check for binary literal
+		if (isValidBinaryString(arg)) {
+			if (arg.length() == 0) {
+				return "0000";
+			} else if (arg.length() == 1) {
+				return "000" + arg;
+			} else if (arg.length() == 2) {
+				return "00" + arg;
+			} else if (arg.length() == 3) {
+				return "0" + arg;
+			} else {
+				return arg;
+			}
+		}
+
+		// Meaning we have a variable
+		Integer val = varAddressLookup.get(arg);
+		if (val == null) {
+			return null;
+		}
+		
+		String address = Integer.toBinaryString(val);
+		if (address.length() == 0) {
+			return "0000";
+		} else if (address.length() == 1) {
+			return "000" + address;
+		} else if (address.length() == 2) {
+			return "00" + address;
+		} else if (address.length() == 3) {
+			return "0" + address;
+		} else {
+			return address;
+		}
+		
+		
+		// See if we have variable for it
 	}
 }
