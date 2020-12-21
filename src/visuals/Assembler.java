@@ -30,6 +30,7 @@ public class Assembler extends JPanel implements ActionListener {
 	private JButton assembleButton;
 	private JButton sendToSapButton;
 	private JButton exitButton;
+	private JButton decompileButton;
 	private SAPModel model;
 	private JPanel returnPanel;
 
@@ -59,7 +60,7 @@ public class Assembler extends JPanel implements ActionListener {
 		this.inputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
 		this.inputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
 		this.inputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
-		this.inputField.setBorder(BorderFactory.createLineBorder(Color.BLACK ));
+		this.inputField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 		c.gridx = 0;
 		c.gridy = 0;
@@ -67,13 +68,13 @@ public class Assembler extends JPanel implements ActionListener {
 		this.add(this.inputField, c);
 		c.insets = new Insets(0, 10, 0, 0);
 		c.gridheight = 1;
-		
+
 		// Add the compiled program
 		this.outputField = new JLabel("Assembled program here");
-		this.outputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3*BUTTON_PANEL_HEIGHT - 20));
-		this.outputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3*BUTTON_PANEL_HEIGHT - 20));
-		this.outputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y -3*BUTTON_PANEL_HEIGHT - 20));
-		this.outputField.setBorder(BorderFactory.createLineBorder(Color.BLACK ));
+		this.outputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
+		this.outputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
+		this.outputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
+		this.outputField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
 		c.gridx = 2;
 		c.gridy = 0;
@@ -103,7 +104,10 @@ public class Assembler extends JPanel implements ActionListener {
 		// Add the decompile button
 		c.gridx = 2;
 		c.gridy = 3;
-		this.add(new JButton("Decompile current program"), c);
+		this.decompileButton = new JButton("Decompile Current Program");
+		this.decompileButton.setActionCommand("decompile");
+		this.decompileButton.addActionListener(this);
+		this.add(this.decompileButton, c);
 
 		// Add the exit button
 		c.gridx = 2;
@@ -122,14 +126,142 @@ public class Assembler extends JPanel implements ActionListener {
 			return;
 		}
 		if (e.getActionCommand().contentEquals("sendtosap")) {
-			this.outputField.setText("Sending to sap...");
+			this.sendToSap();
 			return;
 		}
 		if (e.getActionCommand().contentEquals("exit")) {
 			Runner.main_frame.setContentPane(this.returnPanel);
 			Runner.main_frame.pack();
 			Runner.main_frame.setVisible(true);
+		}
+		if (e.getActionCommand().contentEquals("decompile")) {
+			this.decompile();
+		}
+	}
 
+	private void sendToSap() {
+		// Edge Case: User just decompiled program
+		if (this.outputField.getText().indexOf("[Address] Binary / Decimal") != -1) {
+			this.outputField.setText("[Assembler Failed] Program Already in SAP!");
+			return;
+		} else if (this.outputField.getText().indexOf("[Assembler Failed]") != -1) {
+			this.outputField.setText("[Assembled Failed] Must have a successfully compiled program to send to SAP");
+			return;
+		}
+	}	
+
+	private void decompile() {
+		// Get the ram contents
+		byte[] ram = this.model.getRAM().getRAM();
+
+		// Write the ram contents to the output unit
+		String out = "<html> [Address] Binary / Decimal<br>";
+
+		for (int i = 0; i < ram.length; i++) {
+			String binary = Integer.toBinaryString(0b11111111 & ram[i]);
+
+			// Padding left zeroes
+			for (int j = 0; j < 8 - binary.length(); j++) {
+				binary = "0" + binary;
+			}
+			out += (i <= 9 ? "[ " : "[") + i + (i <= 9 ? " ] " : "] ") + binary + " / " + ram[i] + "<br>";
+		}
+
+		this.outputField.setText(out + "</html>");
+
+		// Decompile the program
+		out = "";
+		for (int i = 0; i < ram.length; i++) {
+			byte opCode = (byte) (0b11110000 & ram[i]);
+			byte arg = (byte) (0b00001111 & ram[i]);
+			InstructionTypes opType = decodeInstructionHelper(opCode);
+			switch (opType) {
+			case LDA:
+				out += "LDA\t" + argTo4BitString(arg);
+				break;
+			case NOP:
+				out += "NOP";
+				break;
+			case ADD:
+				out += "ADD\t" + argTo4BitString(arg);
+				break;
+			case SUB:
+				out += "SUB\t" + argTo4BitString(arg);
+				break;
+			case STA:
+				out += "STA\t" + argTo4BitString(arg);
+				break;
+			case LDI:
+				out += "LDI\t" + argTo4BitString(arg);
+				break;
+			case JMP:
+				out += "JMP\t" + argTo4BitString(arg);
+				break;
+			case JC:
+				out += "JC\t" + argTo4BitString(arg);
+				break;
+			case JZ:
+				out += "JZ\t" + argTo4BitString(arg);
+				break;
+			case OUT:
+				out += "OUT";
+				break;
+			case HLT:
+				out += "HLT";
+				break;
+			default:
+				break;
+			}
+
+			out += "\n";
+
+		}
+		this.inputField.setText(out);
+	}
+
+	private String argTo4BitString(byte arg) {
+		String rVal = Integer.toBinaryString(0b1111 & arg) + "";
+
+		if (rVal.length() == 4) {
+			return rVal;
+		} else if (rVal.length() == 3) {
+			return "0" + rVal;
+		} else if (rVal.length() == 2) {
+			return "00" + rVal;
+		} else if (rVal.length() == 1) {
+			return "000" + rVal;
+		} else {
+			return "0000";
+		}
+	}
+
+	// Helper method that parses a byte and finds its instruction type
+	private InstructionTypes decodeInstructionHelper(byte instructionVal) {
+		switch (instructionVal) {
+		case 0b00000000:
+			return InstructionTypes.NOP;
+		case 0b00010000:
+			return InstructionTypes.LDA;
+		case 0b00100000:
+			return InstructionTypes.ADD;
+		case 0b00110000:
+			return InstructionTypes.SUB;
+		case 0b01000000:
+			return InstructionTypes.STA;
+		case 0b01010000:
+			return InstructionTypes.LDI;
+		case 0b01100000:
+			return InstructionTypes.JMP;
+		case 0b01110000:
+			return InstructionTypes.JC;
+		case (byte) 0b10000000:
+			return InstructionTypes.JZ;
+		case (byte) 0b11100000:
+			return InstructionTypes.OUT;
+		case (byte) 0b11110000:
+			return InstructionTypes.HLT;
+		default:
+			return InstructionTypes.INVALID;
 		}
 	}
 

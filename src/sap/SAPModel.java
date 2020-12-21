@@ -137,7 +137,7 @@ public class SAPModel implements ClockObserver {
 		return decodeInstructionHelper(instructionVal);
 	}
 
-	// Helper method that parses a byte and finds its instruciton type
+	// Helper method that parses a byte and finds its instruction type
 	private InstructionTypes decodeInstructionHelper(byte instructionVal) {
 		switch (instructionVal) {
 		case 0b00000000:
