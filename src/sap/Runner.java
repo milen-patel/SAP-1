@@ -27,3 +27,8 @@ public class Runner {
 		main_frame.setVisible(true);
 	}
 }
+
+
+//TODO fix events while autoplay is occurring, add slider for autoplay speed
+// Add grammar for assembler
+// Add RAM MAR selector feature

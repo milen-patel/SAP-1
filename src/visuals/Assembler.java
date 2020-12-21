@@ -3,6 +3,7 @@ package visuals;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,10 +32,9 @@ public class Assembler extends JPanel implements ActionListener {
 	private JButton exitButton;
 	private SAPModel model;
 	private JPanel returnPanel;
-	
-	// Define constants
-	private static final int SCREEN_X = 2318 / 3;
-	private static final int SCREEN_Y = 1600 / 3;
+
+	private static final int SCREEN_X = 225 + (2318 / 3);
+	private static final int SCREEN_Y = 50 + (1600 / 3);
 	private static final int BUTTON_PANEL_HEIGHT = 50;
 	private static final Dimension WIDGET_SIZE = new Dimension(SCREEN_X, SCREEN_Y);
 	private static final Color BACKGROUND_COLOR = Color.WHITE;
@@ -53,25 +53,28 @@ public class Assembler extends JPanel implements ActionListener {
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.gridwidth = 1;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.fill = GridBagConstraints.NORTH;
 
 		// Add the text input area
 		this.inputField = new JTextArea();
-		this.inputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
-		this.inputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
-		this.inputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
-	    this.inputField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		this.inputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
+		this.inputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
+		this.inputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
+		this.inputField.setBorder(BorderFactory.createLineBorder(Color.BLACK ));
 
 		c.gridx = 0;
 		c.gridy = 0;
+		c.gridheight = 6;
 		this.add(this.inputField, c);
-
+		c.insets = new Insets(0, 10, 0, 0);
+		c.gridheight = 1;
+		
 		// Add the compiled program
 		this.outputField = new JLabel("Assembled program here");
-		this.outputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
-		this.outputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
-		this.outputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - BUTTON_PANEL_HEIGHT));
+		this.outputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3*BUTTON_PANEL_HEIGHT - 20));
+		this.outputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3*BUTTON_PANEL_HEIGHT - 20));
+		this.outputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y -3*BUTTON_PANEL_HEIGHT - 20));
+		this.outputField.setBorder(BorderFactory.createLineBorder(Color.BLACK ));
+
 		c.gridx = 2;
 		c.gridy = 0;
 		this.add(this.outputField, c);
@@ -80,7 +83,7 @@ public class Assembler extends JPanel implements ActionListener {
 		c.gridwidth = 1;
 
 		// Add the assembler button
-		c.gridx = 0;
+		c.gridx = 2;
 		c.gridy = 1;
 		this.assembleButton = new JButton("Assemble");
 		this.assembleButton.setActionCommand("assemble");
@@ -89,8 +92,8 @@ public class Assembler extends JPanel implements ActionListener {
 		this.add(this.assembleButton, c);
 
 		// Add the send to sap button
-		c.gridx = 1;
-		c.gridy = 1;
+		c.gridx = 2;
+		c.gridy = 2;
 		this.sendToSapButton = new JButton("Send to SAP");
 		this.sendToSapButton.setActionCommand("sendtosap");
 		this.sendToSapButton.addActionListener(this);
@@ -99,12 +102,12 @@ public class Assembler extends JPanel implements ActionListener {
 
 		// Add the decompile button
 		c.gridx = 2;
-		c.gridy = 1;
+		c.gridy = 3;
 		this.add(new JButton("Decompile current program"), c);
-		
+
 		// Add the exit button
-		c.gridx = 3;
-		c.gridy = 1;
+		c.gridx = 2;
+		c.gridy = 4;
 		this.exitButton = new JButton("Exit");
 		this.exitButton.setActionCommand("exit");
 		this.exitButton.addActionListener(this);
@@ -468,7 +471,7 @@ public class Assembler extends JPanel implements ActionListener {
 		if (val == null) {
 			return null;
 		}
-		
+
 		String address = Integer.toBinaryString(val);
 		if (address.length() == 0) {
 			return "0000";
@@ -481,8 +484,7 @@ public class Assembler extends JPanel implements ActionListener {
 		} else {
 			return address;
 		}
-		
-		
+
 		// See if we have variable for it
 	}
 }

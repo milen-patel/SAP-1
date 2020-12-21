@@ -18,7 +18,6 @@ import sap.SAPModel;
 import javax.swing.text.DefaultCaret;
 
 public class View extends JPanel implements interfaces.LogObserver, ActionListener, interfaces.ClockObserver {
-
 	// Components needed by the widget
 	private SAPModel model;
 	private JLabel clockStatusLabel;
@@ -46,7 +45,6 @@ public class View extends JPanel implements interfaces.LogObserver, ActionListen
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.VERTICAL;
-		this.setPreferredSize(new Dimension(1000, 1000));
 
 		// Add the SAP View Widget (Middle part)
 		this.viewWidget = new SAPViewWidget(this.model);
