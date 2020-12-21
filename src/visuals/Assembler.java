@@ -40,6 +40,7 @@ public class Assembler extends JPanel implements ActionListener {
 	private static final Dimension WIDGET_SIZE = new Dimension(SCREEN_X, SCREEN_Y);
 	private static final Color BACKGROUND_COLOR = Color.WHITE;
 	private static final char ASSEMBLER_COMMENT_SYMBOL = '#';
+	private static final String OUTPUT_PLACEHOLDER = "<html>Assembled Program Here</html>";
 
 	public Assembler(SAPModel model, JPanel returnPanel) {
 		// Encapsulate SAP Model and return view
@@ -70,7 +71,7 @@ public class Assembler extends JPanel implements ActionListener {
 		c.gridheight = 1;
 
 		// Add the compiled program
-		this.outputField = new JLabel("Assembled program here");
+		this.outputField = new JLabel(OUTPUT_PLACEHOLDER);
 		this.outputField.setPreferredSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
 		this.outputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
 		this.outputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
@@ -146,12 +147,31 @@ public class Assembler extends JPanel implements ActionListener {
 			this.outputField.setText("[Assembler Failed] Program Already in SAP!");
 			return;
 		} else if (this.outputField.getText().indexOf("[Assembler Failed]") != -1) {
-			this.outputField.setText("[Assembled Failed] Must have a successfully compiled program to send to SAP");
+			this.outputField.setText("[Assembler Failed] Must have a successfully compiled program to send to SAP");
+			return;
+		} else if (this.outputField.getText().indexOf(OUTPUT_PLACEHOLDER) != -1) {
+			this.outputField.setText("[Assembler Failed] Must have a successfully compiled program to send to SAP");
 			return;
 		}
 
 		// Get the SAP Ram
+		byte[] ram = this.model.getRAM().getRAM();
 
+		// Get the last compiled program, as an array of strings
+		String[] program = this.outputField.getText().split("<br>");
+
+		// Remove HTML tag from first instruction
+		program[0] = program[0].substring(6);
+
+		// Trim each string just to the machine code
+		for (int i = 0; i < 16; i++) {
+			program[i] = program[i].substring(program[i].indexOf(": ") + 2);
+		}
+
+		// Move each string into memory
+		for (int i = 0; i < ram.length; i++) {
+			this.model.getRAM().manualValueChange(i, (byte) (0b11111111 & Integer.parseInt(program[i], 2)));
+		}
 	}
 
 	private void decompile() {
@@ -221,52 +241,6 @@ public class Assembler extends JPanel implements ActionListener {
 
 		}
 		this.inputField.setText(out);
-	}
-
-	private String argTo4BitString(byte arg) {
-		String rVal = Integer.toBinaryString(0b1111 & arg) + "";
-
-		if (rVal.length() == 4) {
-			return rVal;
-		} else if (rVal.length() == 3) {
-			return "0" + rVal;
-		} else if (rVal.length() == 2) {
-			return "00" + rVal;
-		} else if (rVal.length() == 1) {
-			return "000" + rVal;
-		} else {
-			return "0000";
-		}
-	}
-
-	// Helper method that parses a byte and finds its instruction type
-	private InstructionTypes decodeInstructionHelper(byte instructionVal) {
-		switch (instructionVal) {
-		case 0b00000000:
-			return InstructionTypes.NOP;
-		case 0b00010000:
-			return InstructionTypes.LDA;
-		case 0b00100000:
-			return InstructionTypes.ADD;
-		case 0b00110000:
-			return InstructionTypes.SUB;
-		case 0b01000000:
-			return InstructionTypes.STA;
-		case 0b01010000:
-			return InstructionTypes.LDI;
-		case 0b01100000:
-			return InstructionTypes.JMP;
-		case 0b01110000:
-			return InstructionTypes.JC;
-		case (byte) 0b10000000:
-			return InstructionTypes.JZ;
-		case (byte) 0b11100000:
-			return InstructionTypes.OUT;
-		case (byte) 0b11110000:
-			return InstructionTypes.HLT;
-		default:
-			return InstructionTypes.INVALID;
-		}
 	}
 
 	private String parseProgram(String text) {
@@ -343,6 +317,10 @@ public class Assembler extends JPanel implements ActionListener {
 					return "<html>[Assembler Failed] All variables must be defined with a value</html>";
 				}
 
+				if (varVal.length() != 8) {
+					return "<html>[Assembler Failed] All variables must be defined with exactly 8 bits</html>";
+				}
+
 				// Check for duplicate variable declaration
 				for (String s : varValLookup.keySet()) {
 					if (s.contentEquals(varName)) {
@@ -362,7 +340,7 @@ public class Assembler extends JPanel implements ActionListener {
 		}
 
 		// Parse labels
-		Map<String, Integer> labelLookup = new TreeMap<String, Integer>();
+		Map<String, String> labelLookup = new TreeMap<String, String>();
 
 		int pos = 0;
 		for (int i = 0; i < result.size(); i++) {
@@ -381,7 +359,7 @@ public class Assembler extends JPanel implements ActionListener {
 				}
 
 				// Add label to our lookup table
-				labelLookup.put(curr.substring(1), pos);
+				labelLookup.put(curr.substring(1), padBinaryString4Bits(Integer.toBinaryString(pos)));
 			} else {
 				pos++;
 			}
@@ -467,7 +445,6 @@ public class Assembler extends JPanel implements ActionListener {
 					return "<html>[Assembler Failed] LDA Missing Arguement</html>";
 				}
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
-					System.out.println("A");
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
@@ -478,7 +455,6 @@ public class Assembler extends JPanel implements ActionListener {
 					return "<html>[Assembler Failed] ADD Missing Arguement</html>";
 				}
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
-					System.out.println("B");
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
@@ -489,7 +465,6 @@ public class Assembler extends JPanel implements ActionListener {
 					return "<html>[Assembler Failed] SUB Missing Arguement</html>";
 				}
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
-					System.out.println("C");
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
@@ -500,7 +475,6 @@ public class Assembler extends JPanel implements ActionListener {
 					return "<html>[Assembler Failed] STA Missing Arguement</html>";
 				}
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
-					System.out.println("D");
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
@@ -508,13 +482,14 @@ public class Assembler extends JPanel implements ActionListener {
 			case LDI:
 				rArr[i] = "0101";
 				if (curr.length() != 7) {
-					return "<html>[Assembler Failed] LDI Invalid Arguement</html>";
+					return "<html>[Assembler Failed] LDI must take a 4-bit binary string</html>";
 				}
-				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
-					System.out.println("D");
-					return "<html>[Assembler Failed] Missing variable.</html>";
+				String argLDI = curr.substring(3);
+				// Ensure that LDI arg is a 4-bit binary string
+				if (!isValidBinaryString(argLDI)) {
+					return "<html>[Assembler Failed] LDI must take a 4-bit binary string</html>";
 				}
-				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				rArr[i] += padBinaryString4Bits(argLDI);
 				break;
 			case JMP:
 				rArr[i] = "0110";
@@ -528,7 +503,7 @@ public class Assembler extends JPanel implements ActionListener {
 				}
 				// Case 1: Argument is binary
 				rArr[i] += padBinaryString4Bits(arg);
-				
+
 				break;
 			case JC:
 				rArr[i] = "0111";
@@ -570,7 +545,7 @@ public class Assembler extends JPanel implements ActionListener {
 
 		rVal = "<html>";
 		for (int i = 0; i < rArr.length; i++) {
-			rVal += i + ": " + (rArr[i] == null ? "XXXXXXXX" : rArr[i]) + "<br>";
+			rVal += i + ": " + (rArr[i] == null ? "00000000" : rArr[i]) + "<br>";
 		}
 		return rVal + "</html>";
 	}
@@ -623,7 +598,6 @@ public class Assembler extends JPanel implements ActionListener {
 				return false;
 			}
 		}
-		// no failures, so
 		return true;
 	}
 
@@ -667,5 +641,51 @@ public class Assembler extends JPanel implements ActionListener {
 		}
 
 		// See if we have variable for it
+	}
+	
+	private String argTo4BitString(byte arg) {
+		String rVal = Integer.toBinaryString(0b1111 & arg) + "";
+
+		if (rVal.length() == 4) {
+			return rVal;
+		} else if (rVal.length() == 3) {
+			return "0" + rVal;
+		} else if (rVal.length() == 2) {
+			return "00" + rVal;
+		} else if (rVal.length() == 1) {
+			return "000" + rVal;
+		} else {
+			return "0000";
+		}
+	}
+
+	// Helper method that parses a byte and finds its instruction type
+	private InstructionTypes decodeInstructionHelper(byte instructionVal) {
+		switch (instructionVal) {
+		case 0b00000000:
+			return InstructionTypes.NOP;
+		case 0b00010000:
+			return InstructionTypes.LDA;
+		case 0b00100000:
+			return InstructionTypes.ADD;
+		case 0b00110000:
+			return InstructionTypes.SUB;
+		case 0b01000000:
+			return InstructionTypes.STA;
+		case 0b01010000:
+			return InstructionTypes.LDI;
+		case 0b01100000:
+			return InstructionTypes.JMP;
+		case 0b01110000:
+			return InstructionTypes.JC;
+		case (byte) 0b10000000:
+			return InstructionTypes.JZ;
+		case (byte) 0b11100000:
+			return InstructionTypes.OUT;
+		case (byte) 0b11110000:
+			return InstructionTypes.HLT;
+		default:
+			return InstructionTypes.INVALID;
+		}
 	}
 }
