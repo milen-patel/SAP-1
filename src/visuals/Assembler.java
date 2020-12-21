@@ -140,7 +140,8 @@ public class Assembler extends JPanel implements ActionListener {
 	}
 
 	private void sendToSap() {
-		// Edge Case: User just decompiled program
+		// Edge Case: User just decompiled program, or no successfully compiled program
+		// ready to send
 		if (this.outputField.getText().indexOf("[Address] Binary / Decimal") != -1) {
 			this.outputField.setText("[Assembler Failed] Program Already in SAP!");
 			return;
@@ -148,7 +149,10 @@ public class Assembler extends JPanel implements ActionListener {
 			this.outputField.setText("[Assembled Failed] Must have a successfully compiled program to send to SAP");
 			return;
 		}
-	}	
+
+		// Get the SAP Ram
+
+	}
 
 	private void decompile() {
 		// Get the ram contents
@@ -514,12 +518,43 @@ public class Assembler extends JPanel implements ActionListener {
 				break;
 			case JMP:
 				rArr[i] = "0110";
+				if (curr.length() == 3) {
+					return "<html>[Assembler Failed] JMP missing arguement. </html>";
+				}
+				String arg = curr.substring(3);
+				// Case 0 : No arg provided
+				if (arg == null || arg.length() == 0) {
+					return "<html>[Assembler Failed] No parameter given to JMP instruction.</html>";
+				}
+				// Case 1: Argument is binary
+				rArr[i] += padBinaryString4Bits(arg);
+				
 				break;
 			case JC:
 				rArr[i] = "0111";
+				if (curr.length() == 2) {
+					return "<html>[Assembler Failed] JMP missing arguement. </html>";
+				}
+				String argC = curr.substring(2);
+				// Case 0 : No arg provided
+				if (argC == null || argC.length() == 0) {
+					return "<html>[Assembler Failed] No parameter given to JMP instruction.</html>";
+				}
+				// Case 1: Argument is binary
+				rArr[i] += padBinaryString4Bits(argC);
 				break;
 			case JZ:
 				rArr[i] = "1000";
+				if (curr.length() == 2) {
+					return "<html>[Assembler Failed] JMP missing arguement. </html>";
+				}
+				String argZ = curr.substring(2);
+				// Case 0 : No arg provided
+				if (argZ == null || argZ.length() == 0) {
+					return "<html>[Assembler Failed] No parameter given to JMP instruction.</html>";
+				}
+				// Case 1: Argument is binary
+				rArr[i] += padBinaryString4Bits(argZ);
 				break;
 			case OUT:
 				rArr[i] = "11100000";
@@ -538,6 +573,20 @@ public class Assembler extends JPanel implements ActionListener {
 			rVal += i + ": " + (rArr[i] == null ? "XXXXXXXX" : rArr[i]) + "<br>";
 		}
 		return rVal + "</html>";
+	}
+
+	private String padBinaryString4Bits(String arg) {
+		if (arg.length() == 0) {
+			return "0000";
+		} else if (arg.length() == 1) {
+			return "000" + arg;
+		} else if (arg.length() == 2) {
+			return "00" + arg;
+		} else if (arg.length() == 3) {
+			return "0" + arg;
+		} else {
+			return arg;
+		}
 	}
 
 	private InstructionTypes parseInstruction(String curr) {
