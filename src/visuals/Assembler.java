@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -148,12 +149,11 @@ public class Assembler extends JPanel implements ActionListener {
 		// Parse labels
 		Map<String, Integer> labelLookup = new TreeMap<String, Integer>();
 
-		int numLabels = 0;
+		int pos = 0;
 		for (int i = 0; i < result.size(); i++) {
 			String curr = result.get(i);
 
 			if (curr.length() > 0 && curr.charAt(0) == '.') {
-				numLabels++;
 
 				// If the current label isn't define
 				if (curr.length() == 1 || curr.substring(1).isBlank() || curr.substring(1).isEmpty()) {
@@ -166,39 +166,73 @@ public class Assembler extends JPanel implements ActionListener {
 				}
 
 				// Add label to our lookup table
-				labelLookup.put(curr.substring(1), i + 1);
+				labelLookup.put(curr.substring(1), pos);
+			} else {
+				pos++;
 			}
 		}
-		
+
 		// Remove all labels from the array (List<String>)
 		for (String s : labelLookup.keySet()) {
-			result.remove("."+s);
+			result.remove("." + s);
 		}
 
 		// Validate we have enough memory for the program
 		if (result.size() > 16) {
 			return "<html>[Assembler Failed] Cannot compile program into 16 bytes.</html>";
 		}
-/*
- * 
-lda 5
-.loop
-out
-j loop
- * 
- */
+
 		// Grab all of the labels
-		Set<String> labels =  labelLookup.keySet();
-		
+		Set<String> labelsSet = labelLookup.keySet();
+		List<String> labels = new ArrayList<String>();
+		labels.addAll(labelsSet);
+
+		// Sort labels by descending length
+		labels.sort(Comparator.comparingInt(String::length));
+
 		// Replace labels with numerical locations
 		for (int i = 0; i < result.size(); i++) {
 			// Check all keys for a match
-			for (String currLabel : labels) {
-				if (result.get(i).indexOf(currLabel+"\n") != -1) {
+			for (int j = labels.size() - 1; j >= 0; j--) {
+				String currLabel = labels.get(j);
+				if (result.get(i).indexOf(currLabel) != -1
+						&& result.get(i).substring((result.get(i).indexOf(currLabel))).contentEquals(currLabel)) {
 					// Match!
-					
+					String s = result.get(i);
+
+					s = s.substring(0, s.indexOf(currLabel)) + labelLookup.get(currLabel);
+					// Replace value in the array
+					result.set(i, s);
 				}
 			}
+		}
+
+		// Make sure that all JMP/JC/JZ instructions that used labels were replaced
+		for (int i = 0; i < result.size(); i++) {
+			// Grab the current instruction
+			String curr = result.get(i);
+
+			// Check if its a branch
+			if (curr.indexOf("JMP") != -1) {
+				if (curr.substring(3).matches("[a-zA-Z]+")) {
+					return "<html>[Assembler Failed] Cannot compile the following instruction:." + curr + "</html>";
+				}
+			} else if (curr.indexOf("JC") != -1) {
+				if (curr.substring(2).matches("[a-zA-Z]+")) {
+					return "<html>[Assembler Failed] Cannot compile the following instruction:." + curr + "</html>";
+				}
+			} else if (curr.indexOf("JZ") != -1) {
+				if (curr.substring(2).matches("[a-zA-Z]+")) {
+					return "<html>[Assembler Failed] Cannot compile the following instruction:." + curr + "</html>";
+				}
+			}
+		}
+		
+		// convert each instruction to machine code
+		for (int i = 0; i < result.size(); i++) {
+			// Grab the current instruction
+			String curr = result.get(i);
+			
 		}
 
 		rVal = "<html>";
