@@ -29,7 +29,6 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton analyzeProgramButton;
 	private JButton assemblerButton;
 	private JPanel parentPanel;
-	private byte marVal;
 
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
@@ -44,7 +43,6 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.parentPanel = parentPanel;
 		this.model = model;
 		this.view = (View) parentPanel;
-		this.marVal = 0;
 
 		// Add ourselves as a RAMObserver
 		this.model.getRAM().addRAMObserver(this);
@@ -127,7 +125,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		c.gridwidth = 9;
 		c.gridy = 6;
 		JLabel tmp = new JLabel("              Memory Content");
-		tmp.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+		tmp.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 		this.add(tmp, c);
 
 		// Display the memory content
@@ -140,7 +138,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			switch (i - 1) {
 			case 0:
 				JLabel tmp1 = new JLabel(" [0000]");
-				tmp1.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp1.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, Color.BLACK));
 				this.add(tmp1, c);
 				break;
 			case 1:
@@ -197,33 +195,6 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		}
 		repaint();
 
-		this.paintWidgetBorder();
-
-		// Paint the MAR row
-		this.marChange((byte) 0);
-	}
-
-	private void paintWidgetBorder() {
-		// Paint the right border
-		for (int i = 0; i < this.butts.length; i++) {
-			this.butts[i][7].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
-		}
-
-		// Paint the bottom border and top border
-		for (int i = 0; i < 8; i++) {
-			if (i == 7) {
-				this.butts[this.butts.length - 1][i]
-						.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
-				this.butts[0][i].setBorder(BorderFactory.createMatteBorder(1, 0, 0, 1, Color.BLACK));
-
-				continue;
-			}
-			this.butts[this.butts.length - 1][i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-			this.butts[0][i].setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
-
-		}
-
-		
 	}
 
 	// Helper function for accessing individual bits in memory; Address: [0, 15]
@@ -243,28 +214,13 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 			this.butts[address][i].setBorder(null);
 		}
-		paintWidgetBorder();
 
 		// Inform the log
 		EventLog.getEventLog().addEntry("Repainted RAM address " + address);
 	}
 
 	public void marChange(byte newMarVal) {
-		// Replace the old mar val with correctly painted bits
-		valChanged(this.marVal);
-		this.marVal = newMarVal;
-
-		// Paint the MAR bits with the right color
-		for (int i = 0; i <= 7; i++) {
-			this.butts[newMarVal][i].setBackground(COLOR_MAR);
-			if (i == 0) {
-				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 2, 2, 0, Color.BLACK));
-			} else if (i == 7) {
-				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 0, 2, 2, Color.BLACK));
-			} else {
-				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
-			}
-		}
+		System.out.println(newMarVal);
 	}
 
 	@Override
