@@ -513,63 +513,76 @@ public class Assembler extends JPanel implements ActionListener {
 
 				break;
 			case JC:
-				rArr[i] = "0111";
+				// Validate argument length
 				if (curr.length() == 2) {
 					return "<html>[Assembler Failed] JMP missing arguement. </html>";
 				}
+				
+				// Manually add in the OP Code
+				rArr[i] = "0111";
+				
+				// Grab the argument
 				String argC = curr.substring(2);
-				// Case 0 : No arg provided
+
+				// Case 0 : No argument provided
 				if (argC == null || argC.length() == 0) {
 					return "<html>[Assembler Failed] No parameter given to JMP instruction.</html>";
 				}
-				// Case 1: Argument is binary
+				
+				// Case 1: Argument isn't a valid binary string
+				if (!this.isValidBinaryString(argC)) {
+					return "<html>[Assembler Failed] JZ argument must be a valid binary string.</html>";
+				}
+
+				// Case 2: Argument is binary
 				rArr[i] += padBinaryString4Bits(argC);
+				
 				break;
 			case JZ:
 				// Validate argument
 				if (curr.length() == 2) {
 					return "<html>[Assembler Failed] JMP missing arguement. </html>";
 				}
-				
+
 				// Set the 4 most significant bits
 				rArr[i] = "1000";
-				
+
 				// Parse the argument
 				String argZ = curr.substring(2);
-				
-				// Case 0: Argument isn't a valid binary string
-				if (!this.isValidBinaryString(argZ)) {
-					return "<html>[Assembler Failed] JZ argument must be a valid binary string.</html>";
-				}
-				
+
 				// Case 1 : No argument provided
 				if (argZ == null || argZ.length() != 4) {
 					return "<html>[Assembler Failed] JZ missing 4-bit binary argument.</html>";
 				}
-				
-				// Case 2: Argument is binary
+
+				// Case 2: Argument isn't a valid binary string
+				if (!this.isValidBinaryString(argZ)) {
+					return "<html>[Assembler Failed] JZ argument must be a valid binary string.</html>";
+				}
+
+				// Case 3: Argument is binary
 				rArr[i] += padBinaryString4Bits(argZ);
-				
+
 				break;
 			case OUT:
 				// Make sure that no argument was provided
 				if (curr.length() != 3) {
 					return "<html>[Assembler Failed] OUT instruction does not take a parameter.</html>";
 				}
-				
+
 				// Manually set value
 				rArr[i] = "11100000";
-				
+
 				break;
 			case HLT:
 				// Make sure that no argument was provided
 				if (curr.length() != 3) {
 					return "<html>[Assembler Failed] OUT instruction does not take a parameter.</html>";
 				}
-				
+
 				// Manually set value
 				rArr[i] = "11110000";
-				
+
 				break;
 			default:
 				return "<html>[Assembler Failed] Unable to parse instruction: '" + curr + "'.</html>";
