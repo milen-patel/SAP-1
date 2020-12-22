@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import sap.EventLog;
 import sap.Runner;
@@ -39,7 +40,13 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private static final Color COLOR_ON = new Color(246, 203, 225);
 	private static final Color COLOR_OFF = new Color(246, 213, 203);
 	private static final Color COLOR_MAR = Color.gray;
-
+	private static final Border BOTTOM_BORDER = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK);
+	private static final Border RIGHT_BORDER = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK);
+	private static final Border BOTTOM_RIGHT_BORDER = BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK);
+	private static final Border TOP_LEFT_RIGHT_BORDER = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK);
+	private static final Border LEFT_RIGHT_BORDER = BorderFactory.createMatteBorder(0, 1, 0, 1, Color.BLACK);
+	private static final Border FULL_BORDER = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK);
+	
 	public RAMViewWidget(sap.SAPModel model, JPanel parentPanel) {
 		// Store what we need to maintain
 		this.marVal = 0;
@@ -129,7 +136,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		c.gridwidth = 9;
 		c.gridy = 6;
 		JLabel tmp = new JLabel("              Memory Content");
-		tmp.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+		tmp.setBorder(FULL_BORDER);
 		this.add(tmp, c);
 
 		// Display the memory content
@@ -142,52 +149,52 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			switch (i - 1) {
 			case 0:
 				JLabel tmp1 = new JLabel(" [0000]");
-				tmp1.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 1, Color.BLACK));
+				tmp1.setBorder(LEFT_RIGHT_BORDER);
 				this.add(tmp1, c);
 				break;
 			case 1:
 				JLabel tmp2 = new JLabel(" [0001]");
-				tmp2.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp2.setBorder(TOP_LEFT_RIGHT_BORDER);
 				this.add(tmp2, c);
 				break;
 			case 2:
 				JLabel tmp3 = new JLabel(" [0010]");
-				tmp3.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp3.setBorder(TOP_LEFT_RIGHT_BORDER);
 				this.add(tmp3, c);
 				break;
 			case 3:
 				JLabel tmp4 = new JLabel(" [0011]");
-				tmp4.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp4.setBorder(TOP_LEFT_RIGHT_BORDER);
 				this.add(tmp4, c);
 				break;
 			case 4:
 				JLabel tmp5 = new JLabel(" [0100]");
-				tmp5.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp5.setBorder(TOP_LEFT_RIGHT_BORDER);
 				this.add(tmp5, c);
 				break;
 			case 5:
 				JLabel tmp6 = new JLabel(" [0101]");
-				tmp6.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp6.setBorder(TOP_LEFT_RIGHT_BORDER);
 				this.add(tmp6, c);
 				break;
 			case 6:
 				JLabel tmp7 = new JLabel(" [0110]");
-				tmp7.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp7.setBorder(TOP_LEFT_RIGHT_BORDER);
 				this.add(tmp7, c);
 				break;
 			case 7:
 				JLabel tmp8 = new JLabel(" [0111]");
-				tmp8.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+				tmp8.setBorder(TOP_LEFT_RIGHT_BORDER);
 				this.add(tmp8, c);
 				break;
 			default:
 				if (Integer.toBinaryString(i - 1).contentEquals("1111")) {
 					JLabel tmp9 = new JLabel(" [" + Integer.toBinaryString(i - 1) + "] ");
-					tmp9.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+					tmp9.setBorder(FULL_BORDER);
 					this.add(tmp9, c);
 				} else {
 					JLabel tmp9 = new JLabel(" [" + Integer.toBinaryString(i - 1) + "] ");
-					tmp9.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK));
+					tmp9.setBorder(TOP_LEFT_RIGHT_BORDER);
 					this.add(tmp9, c);
 				}
 
@@ -200,7 +207,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 		// Add the right borders to the RAM visualization
 		for (int i = 0; i < this.butts.length; i++) {
-			this.butts[i][this.butts[0].length - 1].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+			this.butts[i][this.butts[0].length - 1].setBorder(RIGHT_BORDER);
 		}
 
 		// Add the bottom border to the RAM visualization
@@ -209,10 +216,10 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			// Bottom right piece gets special border
 			if (i == 7) {
 				this.butts[this.butts.length - 1][i]
-						.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
+						.setBorder(BOTTOM_RIGHT_BORDER);
 			} else {
 				this.butts[this.butts.length - 1][i]
-						.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+						.setBorder(BOTTOM_BORDER);
 			}
 
 		}
@@ -245,7 +252,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 			// If we are on the rightmost position, keep the border
 			if (i == 7) {
-				this.butts[address][i].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+				this.butts[address][i].setBorder(RIGHT_BORDER);
 			} else {
 				this.butts[address][i].setBorder(null);
 			}
@@ -253,10 +260,10 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			// If we are on the bottom row, keep the border
 			if (address==15) {
 				if (i == 7) {
-					this.butts[address][i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
+					this.butts[address][i].setBorder(BOTTOM_RIGHT_BORDER);
 
 				} else {
-					this.butts[address][i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+					this.butts[address][i].setBorder(BOTTOM_BORDER);
 				}
 			}
 		}
