@@ -33,8 +33,6 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
 	private static final Dimension WIDGET_SIZE = new Dimension(220, 550);
-	// private static final Color COLOR_ON = new Color(124, 248, 42);
-	// private static final Color COLOR_OFF = new Color(34, 82, 20);
 	private static final Color COLOR_BACKGROUND = new Color(225, 246, 203);
 	private static final Color COLOR_ON = new Color(246, 203, 225);
 	private static final Color COLOR_OFF = new Color(246, 213, 203);
@@ -118,18 +116,16 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.assemblerButton.addActionListener(this);
 		this.add(this.assemblerButton, c);
 
-		c.gridx= 1;
+		c.gridx = 1;
 		c.gridy = 4;
-		this.add(new JButton("TODO"),c);
-		
+		this.add(new JButton("TODO"), c);
+
 		// Add label above RAM content
 		c.gridx = 3;
 		c.gridheight = 1;
 		c.gridwidth = 7;
 		c.gridy = 6;
 		this.add(new JLabel("Memory Content"), c);
-		
-		
 
 		// Display the memory content
 		c.gridx = 4;
