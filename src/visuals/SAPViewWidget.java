@@ -50,7 +50,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private static final Dimension WIDGET_SIZE = new Dimension(525, 500);
 	private static final Color BUTTON_UNSELECTED_BG = new Color(238, 238, 238);
 	private static final Color BUTTON_SELECTED_BG = new Color(55, 55, 55);
-	private static final Color COLOR_BACKGROUND = new Color(101, 207, 114);
+	private static final Color COLOR_BACKGROUND = new Color(203,246,245);
 	private static final Color WIDGET_BORDER_COLOR = Color.BLACK;
 
 	public SAPViewWidget(sap.SAPModel model) {

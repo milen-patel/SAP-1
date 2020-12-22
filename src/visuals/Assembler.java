@@ -34,13 +34,16 @@ public class Assembler extends JPanel implements ActionListener {
 	private SAPModel model;
 	private JPanel returnPanel;
 
+	// Define constants
 	private static final int SCREEN_X = 225 + (2318 / 3);
 	private static final int SCREEN_Y = 50 + (1600 / 3);
 	private static final int BUTTON_PANEL_HEIGHT = 50;
-	private static final Dimension WIDGET_SIZE = new Dimension(SCREEN_X, SCREEN_Y);
-	private static final Color BACKGROUND_COLOR = Color.WHITE;
 	private static final char ASSEMBLER_COMMENT_SYMBOL = '#';
+	private static final Dimension WIDGET_SIZE = new Dimension(SCREEN_X, SCREEN_Y);
+	private static final Color BACKGROUND_COLOR = new Color(225, 246, 203);
+	private static final Color INPUT_BG_COLOR = new Color(203,246,245);
 	private static final String OUTPUT_PLACEHOLDER = "<html>Assembled Program Here</html>";
+	private static final String INPUT_PLACEHOLDER = "\n  Create a program here...";
 
 	public Assembler(SAPModel model, JPanel returnPanel) {
 		// Encapsulate SAP Model and return view
@@ -62,6 +65,8 @@ public class Assembler extends JPanel implements ActionListener {
 		this.inputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
 		this.inputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
 		this.inputField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		this.inputField.setText(INPUT_PLACEHOLDER);
+		this.inputField.setBackground(INPUT_BG_COLOR);
 
 		c.gridx = 0;
 		c.gridy = 0;
@@ -538,7 +543,7 @@ public class Assembler extends JPanel implements ActionListener {
 				rArr[i] = "11110000";
 				break;
 			default:
-				rArr[i] = "N/A";
+				return "<html>[Assembler Failed] Unable to parse instruction: '" + curr + "'.</html>";
 			}
 
 		}
