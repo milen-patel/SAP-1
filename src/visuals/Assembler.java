@@ -520,10 +520,10 @@ public class Assembler extends JPanel implements ActionListener {
 					return "<html>[Assembler Failed] LDI must take a 4-bit binary string</html>";
 				}
 				
-				// Grab arguement
+				// Grab argument
 				String argLDI = curr.substring(3);
 				
-				// Ensure that LDI arg is a 4-bit binary string
+				// Ensure that LDI argument is a 4-bit binary string
 				if (!isValidBinaryString(argLDI)) {
 					return "<html>[Assembler Failed] LDI must take a 4-bit binary string</html>";
 				}
