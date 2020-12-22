@@ -539,9 +539,15 @@ public class Assembler extends JPanel implements ActionListener {
 				rArr[i] += padBinaryString4Bits(argZ);
 				break;
 			case OUT:
+				if (curr.length() != 3) {
+					return "<html>[Assembler Failed] OUT instruction does not take a parameter.</html>";
+				}
 				rArr[i] = "11100000";
 				break;
 			case HLT:
+				if (curr.length() != 3) {
+					return "<html>[Assembler Failed] OUT instruction does not take a parameter.</html>";
+				}
 				rArr[i] = "11110000";
 				break;
 			default:
