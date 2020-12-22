@@ -1,12 +1,6 @@
 package sap;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import visuals.View;
@@ -30,10 +24,6 @@ public class Runner {
 		// Make the frame visible 
 		main_frame.pack();
 		main_frame.setVisible(true);
+		
 	}
 }
-
-
-// Add grammar for assembler
-// Add RAM MAR selector feature
-// Make constants public and use those for coloring

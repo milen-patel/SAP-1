@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import interfaces.SAPObserver;
 import sap.SAPModel.RegisterType;
 
+@SuppressWarnings("serial")
 public class SAPViewWidget extends JPanel implements SAPObserver {
 	// Widget maintains a reference to the model
 	private sap.SAPModel model;

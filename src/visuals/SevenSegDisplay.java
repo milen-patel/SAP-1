@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class SevenSegDisplay extends JPanel implements ActionListener {
 
 	private GridBagConstraints c;

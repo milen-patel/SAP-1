@@ -1,18 +1,13 @@
 package visuals;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.image.BufferedImage;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.Hashtable;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -20,6 +15,7 @@ import javax.swing.event.ChangeListener;
 import sap.SAPModel;
 import javax.swing.text.DefaultCaret;
 
+@SuppressWarnings("serial")
 public class View extends JPanel
 		implements interfaces.LogObserver, ActionListener, interfaces.ClockObserver, ChangeListener {
 

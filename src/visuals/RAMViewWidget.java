@@ -16,6 +16,7 @@ import javax.swing.border.Border;
 import sap.EventLog;
 import sap.Runner;
 
+@SuppressWarnings("serial")
 public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, ActionListener {
 	
 	// Widget components
