@@ -22,6 +22,7 @@ import javax.swing.text.DefaultCaret;
 
 public class View extends JPanel
 		implements interfaces.LogObserver, ActionListener, interfaces.ClockObserver, ChangeListener {
+
 	// Components needed by the widget
 	private SAPModel model;
 	private JLabel clockStatusLabel;
@@ -34,15 +35,13 @@ public class View extends JPanel
 	private RAMViewWidget ramWidget;
 	private JSlider speedSlider;
 	private SevenSegDisplay disp;
-	private JButton numericRepresentationButton;
 
 	// Needed for the auto-runner
 	private boolean isAutoRunning;
 	private BackgroundRunner bRunner;
 
 	// Constants
-	private static final int AUTOPLAY_SPEED_MS = 100;
-	private static final Color VIEW_BACKGROUND_COLOR = new Color(225, 246, 203);
+	public static final Color VIEW_BACKGROUND_COLOR = new Color(225, 246, 203);
 
 	public View() {
 		this.model = new SAPModel();
@@ -82,8 +81,8 @@ public class View extends JPanel
 		c.gridx = 3;
 		c.gridy = 1;
 		c.gridheight = 1;
-
 		this.add(resetButton, c);
+		
 		// Add toggle clock button
 		c.gridx = 3;
 		c.gridy = 2;
@@ -111,6 +110,7 @@ public class View extends JPanel
 		t.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(t, c);
 		c.ipady -= 5;
+
 		// Add speed slider
 		c.gridx = 3;
 		c.gridy = 5;

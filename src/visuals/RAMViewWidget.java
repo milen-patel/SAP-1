@@ -36,7 +36,6 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
 	private static final Dimension WIDGET_SIZE = new Dimension(220, 550);
-	private static final Color COLOR_BACKGROUND = new Color(225, 246, 203);
 	private static final Color COLOR_ON = new Color(246, 203, 225);
 	private static final Color COLOR_OFF = new Color(246, 213, 203);
 	private static final Color COLOR_MAR = Color.gray;
@@ -74,7 +73,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 		// Set our preferred size
 		this.setPreferredSize(WIDGET_SIZE);
-		this.setBackground(COLOR_BACKGROUND);
+		this.setBackground(View.VIEW_BACKGROUND_COLOR);
 
 		// Set the Layout
 		this.setLayout(new GridBagLayout());

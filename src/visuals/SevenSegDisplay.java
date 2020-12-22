@@ -43,7 +43,6 @@ public class SevenSegDisplay extends JPanel implements ActionListener {
 	private static ImageIcon iconNine;
 	private static ImageIcon iconNegative;
 
-	private static final Color VIEW_BACKGROUND_COLOR = new Color(225, 246, 203);
 	private static final String TWOS_COMP_LABEL = "[Mode] 2's Complement";
 	private static final String UNSIGNED_LABEL = "[Mode] Unsigned";
 
@@ -94,7 +93,7 @@ public class SevenSegDisplay extends JPanel implements ActionListener {
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		this.setBackground(VIEW_BACKGROUND_COLOR);
+		this.setBackground(View.VIEW_BACKGROUND_COLOR);
 		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		this.isSigned = false;
 		this.byteVal = 0;

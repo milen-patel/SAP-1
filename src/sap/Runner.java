@@ -36,3 +36,4 @@ public class Runner {
 
 // Add grammar for assembler
 // Add RAM MAR selector feature
+// Make constants public and use those for coloring

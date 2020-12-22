@@ -40,8 +40,6 @@ public class Assembler extends JPanel implements ActionListener {
 	private static final int BUTTON_PANEL_HEIGHT = 50;
 	private static final char ASSEMBLER_COMMENT_SYMBOL = '#';
 	private static final Dimension WIDGET_SIZE = new Dimension(SCREEN_X, SCREEN_Y);
-	private static final Color BACKGROUND_COLOR = new Color(225, 246, 203);
-	private static final Color INPUT_BG_COLOR = new Color(203,246,245);
 	private static final String OUTPUT_PLACEHOLDER = "<html>Assembled Program Here</html>";
 	private static final String INPUT_PLACEHOLDER = "\n  Create a program here...";
 
@@ -52,7 +50,7 @@ public class Assembler extends JPanel implements ActionListener {
 
 		// Set preferred size and color
 		this.setPreferredSize(WIDGET_SIZE);
-		this.setBackground(BACKGROUND_COLOR);
+		this.setBackground(View.VIEW_BACKGROUND_COLOR);
 
 		// Set the Layout
 		this.setLayout(new GridBagLayout());
@@ -66,7 +64,7 @@ public class Assembler extends JPanel implements ActionListener {
 		this.inputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 50));
 		this.inputField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		this.inputField.setText(INPUT_PLACEHOLDER);
-		this.inputField.setBackground(INPUT_BG_COLOR);
+		this.inputField.setBackground(SAPViewWidget.COLOR_BACKGROUND);
 
 		c.gridx = 0;
 		c.gridy = 0;
@@ -81,21 +79,18 @@ public class Assembler extends JPanel implements ActionListener {
 		this.outputField.setMaximumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
 		this.outputField.setMinimumSize(new Dimension(SCREEN_X / 2, SCREEN_Y - 3 * BUTTON_PANEL_HEIGHT - 20));
 		this.outputField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
 		c.gridx = 2;
 		c.gridy = 0;
 		this.add(this.outputField, c);
 
+		// Add the assembler button
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 1;
-
-		// Add the assembler button
 		c.gridx = 2;
 		c.gridy = 1;
 		this.assembleButton = new JButton("Assemble");
 		this.assembleButton.setActionCommand("assemble");
 		this.assembleButton.addActionListener(this);
-
 		this.add(this.assembleButton, c);
 
 		// Add the send to sap button
@@ -104,7 +99,6 @@ public class Assembler extends JPanel implements ActionListener {
 		this.sendToSapButton = new JButton("Send to SAP");
 		this.sendToSapButton.setActionCommand("sendtosap");
 		this.sendToSapButton.addActionListener(this);
-
 		this.add(this.sendToSapButton, c);
 
 		// Add the decompile button
@@ -126,22 +120,30 @@ public class Assembler extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// User wants to show the assembled program in the output field
 		if (e.getActionCommand().contentEquals("assemble")) {
-			this.outputField.setText("Assembling...");
 			this.outputField.setText(parseProgram(this.inputField.getText()));
 			return;
 		}
+
+		// User wants to send the last compiled program to SAP
 		if (e.getActionCommand().contentEquals("sendtosap")) {
 			this.sendToSap();
 			return;
 		}
+
+		// User wants to leave the assembler, and go back to the main view
 		if (e.getActionCommand().contentEquals("exit")) {
 			Runner.main_frame.setContentPane(this.returnPanel);
 			Runner.main_frame.pack();
 			Runner.main_frame.setVisible(true);
+			return;
 		}
+
+		// User wants to decompile the program in SAP
 		if (e.getActionCommand().contentEquals("decompile")) {
 			this.decompile();
+			return;
 		}
 	}
 
@@ -647,7 +649,7 @@ public class Assembler extends JPanel implements ActionListener {
 
 		// See if we have variable for it
 	}
-	
+
 	private String argTo4BitString(byte arg) {
 		String rVal = Integer.toBinaryString(0b1111 & arg) + "";
 
