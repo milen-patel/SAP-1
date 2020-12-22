@@ -53,7 +53,7 @@ public class View extends JPanel
 		c.fill = GridBagConstraints.VERTICAL;
 
 		// Add the SAP View Widget (Middle part)
-		this.disp = new SevenSegDisplay(this.model.getOut().getVal(), false); // TODO
+		this.disp = new SevenSegDisplay(this.model.getOut().getVal(), true); // TODO
 		this.viewWidget = new SAPViewWidget(this.model, disp);
 		c.gridx = 1;
 		c.gridy = 0;

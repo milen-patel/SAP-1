@@ -170,6 +170,17 @@ public class SevenSegDisplay extends JPanel {
 			setImage(4, 0);
 			return;
 		}
+		
+		// If our number is non-negative, treat it as a unsigned value
+		if (val >= 0) {
+			loadVal(val, false);
+			return;
+		}
+		
+		// Else, we have a negative number
+		loadVal((byte) (128 - (0b01111111 & val)), false);
+		setImage(4, -1);
+		
 
 	}
 }
