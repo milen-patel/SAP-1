@@ -619,9 +619,7 @@ public class SAPModel implements ClockObserver {
 				this.notifyPCChange();
 				EventLog.getEventLog().addEntry("Program Counter changed from J flag");
 			}
-
 		}
-
 	}
 
 	// Getter Methods
@@ -747,5 +745,4 @@ public class SAPModel implements ClockObserver {
 			o.flagChange();
 		}
 	}
-
 }
