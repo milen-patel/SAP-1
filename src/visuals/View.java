@@ -33,6 +33,7 @@ public class View extends JPanel
 	private SAPViewWidget viewWidget;
 	private RAMViewWidget ramWidget;
 	private JSlider speedSlider;
+	private SevenSegDisplay disp;
 
 	// Needed for the auto-runner
 	private boolean isAutoRunning;
@@ -50,6 +51,7 @@ public class View extends JPanel
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.VERTICAL;
+	
 
 		// Add the SAP View Widget (Middle part)
 		this.viewWidget = new SAPViewWidget(this.model);
@@ -79,8 +81,8 @@ public class View extends JPanel
 		c.gridx = 3;
 		c.gridy = 1;
 		c.gridheight = 1;
+	
 		this.add(resetButton, c);
-
 		// Add toggle clock button
 		c.gridx = 3;
 		c.gridy = 2;
@@ -150,7 +152,9 @@ public class View extends JPanel
 		c.ipady = 0;
 		c.gridx = 3;
 		c.gridy = 7;
-		this.add(new JLabel("0"), c);
+		this.disp = new SevenSegDisplay((byte)5,true); //TODO
+		this.add(this.disp, c);
+
 		// Add the view as a log observer
 		sap.EventLog.getEventLog().addObserver(this);
 
