@@ -23,6 +23,7 @@ public class SevenSegDisplay extends JPanel {
 	private JLabel bLabel;
 	private JLabel cLabel;
 	private JLabel dLabel;
+	private JLabel[] arr;
 
 	private static ImageIcon iconZero;
 	private static ImageIcon iconOne;
@@ -104,12 +105,71 @@ public class SevenSegDisplay extends JPanel {
 		c.gridy = 0;
 		this.dLabel = new JLabel(iconZero);
 		this.add(this.dLabel, c);
-		
+
+		arr = new JLabel[5];
+		arr[1] = dLabel;
+		arr[2] = cLabel;
+		arr[3] = bLabel;
+		arr[4] = aLabel;
 		loadVal(val, twosComplement);
 	}
 
-	private void loadVal(byte val, boolean twosComplement) {
-		// TODO Auto-generated method stub
-		
+	private void setImage(int position, int val) {
+		if (val == 1) {
+			arr[position].setIcon(iconOne);
+		} else if (val == 2) {
+			arr[position].setIcon(iconTwo);
+
+		} else if (val == 3) {
+			arr[position].setIcon(iconThree);
+
+		} else if (val == 4) {
+			arr[position].setIcon(iconFour);
+
+		} else if (val == 5) {
+			arr[position].setIcon(iconFive);
+
+		} else if (val == 6) {
+			arr[position].setIcon(iconSix);
+
+		} else if (val == 7) {
+			arr[position].setIcon(iconSeven);
+
+		} else if (val == 8) {
+			arr[position].setIcon(iconEight);
+
+		} else if (val == 9) {
+			arr[position].setIcon(iconNine);
+
+		} else if (val == 0) {
+			arr[position].setIcon(iconZero);
+
+		} else if (val == -1) {
+			arr[position].setIcon(iconNegative);
+
+		}
+	}
+
+	public void loadVal(byte val, boolean twosComplement) {
+		if (!twosComplement) {
+			int unsignedVal = 0b11111111 & val;
+
+			// Compute ones position
+			int onesPos = unsignedVal % 10;
+			setImage(1, onesPos);
+			
+			// Compute tens position
+			int tensPos = (unsignedVal%100) / 10;
+			setImage(2, tensPos);
+			
+			// Compute hundreds position
+			int hundredsPos = (unsignedVal%1000) / 100;
+			setImage(3, hundredsPos);
+			
+			// Unsigned, so leave the last image as a 0
+			setImage(4, 0);
+			return;
+		}
+
 	}
 }

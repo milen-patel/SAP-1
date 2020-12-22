@@ -51,10 +51,10 @@ public class View extends JPanel
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.VERTICAL;
-	
 
 		// Add the SAP View Widget (Middle part)
-		this.viewWidget = new SAPViewWidget(this.model);
+		this.disp = new SevenSegDisplay(this.model.getOut().getVal(), false); // TODO
+		this.viewWidget = new SAPViewWidget(this.model, disp);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridheight = 10;
@@ -81,7 +81,7 @@ public class View extends JPanel
 		c.gridx = 3;
 		c.gridy = 1;
 		c.gridheight = 1;
-	
+
 		this.add(resetButton, c);
 		// Add toggle clock button
 		c.gridx = 3;
@@ -152,7 +152,6 @@ public class View extends JPanel
 		c.ipady = 0;
 		c.gridx = 3;
 		c.gridy = 7;
-		this.disp = new SevenSegDisplay((byte)5,true); //TODO
 		this.add(this.disp, c);
 
 		// Add the view as a log observer
@@ -180,7 +179,7 @@ public class View extends JPanel
 				bRunner.terminate();
 				bRunner = null;
 			}
-			
+
 			sap.Clock.getClock().toggleClock();
 		} else if (e.getActionCommand().contentEquals("autoplay")) {
 			if (isAutoRunning) {
@@ -214,7 +213,7 @@ public class View extends JPanel
 			bRunner.start();
 		}
 	}
-	
+
 	public boolean getIsAutoRunning() {
 		return this.isAutoRunning;
 	}
