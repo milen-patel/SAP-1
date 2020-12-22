@@ -444,59 +444,93 @@ public class Assembler extends JPanel implements ActionListener {
 			InstructionTypes iVal = parseInstruction(curr);
 			switch (iVal) {
 			case NOP:
+				// Manually set the entire instruction
 				rArr[i] = "00000000";
 				break;
 			case LDA:
+				// Manually add in the OP Code
 				rArr[i] = "0001";
+				
+				// Validate that an argument was provided
 				if (curr.length() == 3) {
 					return "<html>[Assembler Failed] LDA Missing Arguement</html>";
 				}
+				
+				// Convert argument to binary
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				
 				break;
 			case ADD:
+				// Manually add in the OP Code
 				rArr[i] = "0010";
+				
+				// Validate that an argument was provided
 				if (curr.length() == 3) {
 					return "<html>[Assembler Failed] ADD Missing Arguement</html>";
 				}
+				
+				// Convert argument to binary
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				
 				break;
 			case SUB:
+				// Manually add in the OP Code
 				rArr[i] = "0011";
+				
+				// Validate that an argument was provided
 				if (curr.length() == 3) {
 					return "<html>[Assembler Failed] SUB Missing Arguement</html>";
 				}
+				
+				// Convert argument to binary
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				
 				break;
 			case STA:
+				// Manually add in the OP Code
 				rArr[i] = "0100";
+				
+				// Validate that an argument was provided
 				if (curr.length() == 3) {
 					return "<html>[Assembler Failed] STA Missing Arguement</html>";
 				}
+				
+				// Convert argument to binary
 				if (argToBinary(curr.substring(3), varAddressLookup) == null) {
 					return "<html>[Assembler Failed] Missing variable.</html>";
 				}
 				rArr[i] += argToBinary(curr.substring(3), varAddressLookup);
+				
 				break;
 			case LDI:
+				// Manually add in the OP Code
 				rArr[i] = "0101";
+				
+				// Validate that an argument was provided
 				if (curr.length() != 7) {
 					return "<html>[Assembler Failed] LDI must take a 4-bit binary string</html>";
 				}
+				
+				// Grab arguement
 				String argLDI = curr.substring(3);
+				
 				// Ensure that LDI arg is a 4-bit binary string
 				if (!isValidBinaryString(argLDI)) {
 					return "<html>[Assembler Failed] LDI must take a 4-bit binary string</html>";
 				}
+				
+				// Add argument to compiled program
 				rArr[i] += padBinaryString4Bits(argLDI);
+				
 				break;
 			case JMP:
 				// Validate argument exists
@@ -599,7 +633,6 @@ public class Assembler extends JPanel implements ActionListener {
 			default:
 				return "<html>[Assembler Failed] Unable to parse instruction: '" + curr + "'.</html>";
 			}
-
 		}
 
 		rVal = "<html>";
@@ -661,6 +694,7 @@ public class Assembler extends JPanel implements ActionListener {
 	}
 
 	private String argToBinary(String arg, Map<String, Integer> varAddressLookup) {
+		// Validate input
 		if (arg == null || arg.length() == 0) {
 			return "";
 		}
@@ -698,8 +732,6 @@ public class Assembler extends JPanel implements ActionListener {
 		} else {
 			return address;
 		}
-
-		// See if we have variable for it
 	}
 
 	private String argTo4BitString(byte arg) {
