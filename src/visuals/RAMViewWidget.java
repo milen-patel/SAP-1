@@ -30,6 +30,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton assemblerButton;
 	private JPanel parentPanel;
 	private byte marVal;
+	private boolean shouldHighlightMAR;
 
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
@@ -45,6 +46,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.parentPanel = parentPanel;
 		this.model = model;
 		this.view = (View) parentPanel;
+		this.shouldHighlightMAR = true;
 
 		// Add ourselves as a RAMObserver
 		this.model.getRAM().addRAMObserver(this);
@@ -214,15 +216,15 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		// Iterate over all bits in the current memory position
 		for (int i = 0; i <= 7; i++) {
 			this.butts[address][i].setText("" + lookupRAM(address, 7 - i));
-			this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
-			this.butts[address][i].setBorder(null);
-		}
 
-		// Check if it is the MAR value, in which case special coloring is needed
-		if (address == this.marVal) {
-			for (int i = 0; i <= 7; i++) {
+			// Check if it is the MAR value, in which case special coloring is needed
+			if (this.shouldHighlightMAR && address == this.marVal) {
 				this.butts[address][i].setBackground(COLOR_MAR);
+			} else {
+				this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 			}
+
+			this.butts[address][i].setBorder(null);
 		}
 
 		// Inform the log
@@ -230,6 +232,10 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	}
 
 	public void marChange(byte newMarVal) {
+		// If we aren't in highlighting mode, exit
+		if (!this.shouldHighlightMAR) {
+			return;
+		}
 		// Grab the old MAR Value
 		int oldVal = this.marVal;
 
