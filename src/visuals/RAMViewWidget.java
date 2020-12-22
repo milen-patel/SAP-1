@@ -29,6 +29,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton countingProgramButton;
 	private JButton analyzeProgramButton;
 	private JButton assemblerButton;
+	private JButton highlightMarButton;
 	private JPanel parentPanel;
 	private byte marVal;
 	private boolean shouldHighlightMAR;
@@ -45,6 +46,8 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private static final Border TOP_LEFT_RIGHT_BORDER = BorderFactory.createMatteBorder(1, 1, 0, 1, Color.BLACK);
 	private static final Border LEFT_RIGHT_BORDER = BorderFactory.createMatteBorder(0, 1, 0, 1, Color.BLACK);
 	private static final Border FULL_BORDER = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK);
+	private static final String MAR_ON_LABEL = "[ON] Show MAR on RAM";
+	private static final String MAR_OFF_LABEL = "[OFF] Show MAR on RAM";
 	
 	public RAMViewWidget(sap.SAPModel model, JPanel parentPanel) {
 		// Store what we need to maintain
@@ -125,9 +128,14 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.assemblerButton.addActionListener(this);
 		this.add(this.assemblerButton, c);
 
+		// Add button to toggle MAR visualization
 		c.gridx = 1;
-		c.gridy = 4;
-		this.add(new JButton("TODO"), c);
+		c.gridy = 5;
+		c.gridwidth = 9;
+		this.highlightMarButton = new JButton(this.shouldHighlightMAR ? MAR_ON_LABEL : MAR_OFF_LABEL);
+		this.highlightMarButton.setActionCommand("toggleMAR");
+		this.highlightMarButton.addActionListener(this);
+		this.add(this.highlightMarButton, c);
 
 		// Add label above RAM content
 		c.gridx = 1;
@@ -274,6 +282,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	public void marChange(byte newMarVal) {
 		// If we aren't in highlighting mode, exit
 		if (!this.shouldHighlightMAR) {
+			valChanged(newMarVal);
 			return;
 		}
 		// Grab the old MAR Value
@@ -290,6 +299,20 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	@Override
 	// Responds to button click indicating a bit change in memory
 	public void actionPerformed(ActionEvent e) {
+		// If the user wants to toggle MAR highlighting on the RAM portion of the widget
+		if (e.getActionCommand().contentEquals("toggleMAR")) {
+			// Toggle status value
+			this.shouldHighlightMAR = !this.shouldHighlightMAR;
+			
+			// Update button label
+			this.highlightMarButton.setText(this.shouldHighlightMAR ? MAR_ON_LABEL : MAR_OFF_LABEL);
+
+			// Update visualization
+			this.marChange(this.marVal);
+			
+			return;
+		}
+		
 		// If the program is automatically playing , then stop it first
 		if (this.view.getIsAutoRunning()) {
 			ActionEvent x = new ActionEvent("", 5, "autoplay");
@@ -315,6 +338,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 			return;
 		}
+		
 		// If the user clicks the analyze program button
 		if (e.getActionCommand().contentEquals("analyzeProgram")) {
 			EventLog.getEventLog().addEntry("=============");
