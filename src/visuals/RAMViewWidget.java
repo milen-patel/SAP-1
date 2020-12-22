@@ -29,6 +29,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton analyzeProgramButton;
 	private JButton assemblerButton;
 	private JPanel parentPanel;
+	private byte marVal;
 
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
@@ -40,6 +41,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 	public RAMViewWidget(sap.SAPModel model, JPanel parentPanel) {
 		// Store what we need to maintain
+		this.marVal = 0;
 		this.parentPanel = parentPanel;
 		this.model = model;
 		this.view = (View) parentPanel;
@@ -193,8 +195,9 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 				this.add(butts[c.gridy - 1 - 5 - 1][j - 2], c);
 			}
 		}
-		repaint();
 
+		this.marChange(this.marVal);
+		repaint();
 	}
 
 	// Helper function for accessing individual bits in memory; Address: [0, 15]
@@ -215,12 +218,27 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			this.butts[address][i].setBorder(null);
 		}
 
+		// Check if it is the MAR value, in which case special coloring is needed
+		if (address == this.marVal) {
+			for (int i = 0; i <= 7; i++) {
+				this.butts[address][i].setBackground(COLOR_MAR);
+			}
+		}
+
 		// Inform the log
 		EventLog.getEventLog().addEntry("Repainted RAM address " + address);
 	}
 
 	public void marChange(byte newMarVal) {
-		System.out.println(newMarVal);
+		// Grab the old MAR Value
+		int oldVal = this.marVal;
+
+		// Paint the new value with the correct color
+		this.marVal = newMarVal;
+		valChanged(this.marVal);
+
+		// Remove special coloring from the old MAR value
+		valChanged(oldVal);
 	}
 
 	@Override
