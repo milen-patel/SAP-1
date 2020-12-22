@@ -4,13 +4,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -19,6 +17,7 @@ import sap.EventLog;
 import sap.Runner;
 
 public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, ActionListener {
+	
 	// Widget components
 	private sap.SAPModel model;
 	private View view;
@@ -274,9 +273,6 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 				}
 			}
 		}
-
-		// Inform the log
-		EventLog.getEventLog().addEntry("Repainted RAM address " + address);
 	}
 
 	public void marChange(byte newMarVal) {
@@ -285,6 +281,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			valChanged(newMarVal);
 			return;
 		}
+		
 		// Grab the old MAR Value
 		int oldVal = this.marVal;
 
