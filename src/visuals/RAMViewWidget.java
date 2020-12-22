@@ -30,14 +30,13 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JPanel parentPanel;
 	private byte marVal;
 
-
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
 	private static final Dimension WIDGET_SIZE = new Dimension(220, 550);
-	//private static final Color COLOR_ON = new Color(124, 248, 42);
-	//private static final Color COLOR_OFF = new Color(34, 82, 20);
+	// private static final Color COLOR_ON = new Color(124, 248, 42);
+	// private static final Color COLOR_OFF = new Color(34, 82, 20);
 	private static final Color COLOR_BACKGROUND = new Color(225, 246, 203);
-	private static final Color COLOR_ON = new Color(246,203,225);
+	private static final Color COLOR_ON = new Color(246, 203, 225);
 	private static final Color COLOR_OFF = new Color(246, 213, 203);
 	private static final Color COLOR_MAR = Color.gray;
 
@@ -47,7 +46,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.model = model;
 		this.view = (View) parentPanel;
 		this.marVal = 0;
-		
+
 		// Add ourselves as a RAMObserver
 		this.model.getRAM().addRAMObserver(this);
 
@@ -119,19 +118,25 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		this.assemblerButton.addActionListener(this);
 		this.add(this.assemblerButton, c);
 
+		c.gridx= 1;
+		c.gridy = 4;
+		this.add(new JButton("TODO"),c);
+		
 		// Add label above RAM content
 		c.gridx = 3;
 		c.gridheight = 1;
 		c.gridwidth = 7;
-		c.gridy = 5;
+		c.gridy = 6;
 		this.add(new JLabel("Memory Content"), c);
+		
+		
 
 		// Display the memory content
 		c.gridx = 4;
 		c.gridwidth = 1;
 		for (int i = 1; i <= 16; i++) {
 			c.gridx = 1;
-			c.gridy = i + 5;
+			c.gridy = i + 5 + 1;
 			switch (i - 1) {
 			case 0:
 				this.add(new JLabel("[0000]: "), c);
@@ -163,12 +168,12 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			}
 			for (int j = 2; j < 10; j++) {
 				c.gridx = j;
-				this.add(butts[c.gridy - 1 - 5][j - 2], c);
+				this.add(butts[c.gridy - 1 - 5 - 1][j - 2], c);
 			}
 		}
 		repaint();
-		
-		// Paint the MAR row 
+
+		// Paint the MAR row
 		this.marChange((byte) 0);
 	}
 
@@ -193,22 +198,19 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		// Inform the log
 		EventLog.getEventLog().addEntry("Repainted RAM address " + address);
 	}
-	
-	public void marChange(byte newMarVal) {		
+
+	public void marChange(byte newMarVal) {
 		// Replace the old mar val with correctly painted bits
 		valChanged(this.marVal);
 		this.marVal = newMarVal;
-		
+
 		// Paint the MAR bits with the right color
-		for(int i = 0; i <= 7; i++) {
+		for (int i = 0; i <= 7; i++) {
 			this.butts[newMarVal][i].setBackground(COLOR_MAR);
 			if (i == 0) {
 				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 2, 2, 0, Color.BLACK));
-
-			} else if (i==7) {
+			} else if (i == 7) {
 				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 0, 2, 2, Color.BLACK));
-
-				
 			} else {
 				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
 			}
@@ -220,9 +222,9 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	public void actionPerformed(ActionEvent e) {
 		// If the program is automatically playing , then stop it first
 		if (this.view.getIsAutoRunning()) {
-			ActionEvent x = new ActionEvent("",5,"autoplay");
+			ActionEvent x = new ActionEvent("", 5, "autoplay");
 			this.view.actionPerformed(x);
-			
+
 			// Sleep so event log doesn't get clustered
 			try {
 				Thread.sleep(25);
@@ -230,7 +232,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 				EventLog.getEventLog().addEntry("Failed to sleep for 100 ms");
 			}
 		}
-		
+
 		// If the user wants to open the assembler
 		if (e.getActionCommand().contentEquals("openAssembler")) {
 			// Create instance of the assembler
