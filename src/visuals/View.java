@@ -55,14 +55,14 @@ public class View extends JPanel
 
 		// Add the SAP View Widget (Middle part)
 		this.disp = new SevenSegDisplay(this.model.getOut().getVal());
-		this.viewWidget = new SAPViewWidget(this.model, disp);
+		this.ramWidget = new RAMViewWidget(this.model, this);
+		this.viewWidget = new SAPViewWidget(this.model, disp, this.ramWidget);
 		c.gridx = 1;
 		c.gridy = 0;
 		c.gridheight = 8;
 		this.add(viewWidget, c);
 
 		// Add the RAM View Widget
-		this.ramWidget = new RAMViewWidget(this.model, this);
 		c.gridx = 0;
 		c.gridy = 0;
 		this.add(ramWidget, c);

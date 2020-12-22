@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,20 +28,25 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton analyzeProgramButton;
 	private JButton assemblerButton;
 	private JPanel parentPanel;
+	private byte marVal;
 
 
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
 	private static final Dimension WIDGET_SIZE = new Dimension(220, 550);
-	private static final Color COLOR_ON = new Color(124, 248, 42);
-	private static final Color COLOR_OFF = new Color(34, 82, 20);
+	//private static final Color COLOR_ON = new Color(124, 248, 42);
+	//private static final Color COLOR_OFF = new Color(34, 82, 20);
 	private static final Color COLOR_BACKGROUND = new Color(225, 246, 203);
+	private static final Color COLOR_ON = new Color(246,203,225);
+	private static final Color COLOR_OFF = new Color(246, 213, 203);
+	private static final Color COLOR_MAR = Color.gray;
 
 	public RAMViewWidget(sap.SAPModel model, JPanel parentPanel) {
 		// Store what we need to maintain
 		this.parentPanel = parentPanel;
 		this.model = model;
 		this.view = (View) parentPanel;
+		this.marVal = 0;
 		
 		// Add ourselves as a RAMObserver
 		this.model.getRAM().addRAMObserver(this);
@@ -161,6 +167,9 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			}
 		}
 		repaint();
+		
+		// Paint the MAR row 
+		this.marChange((byte) 0);
 	}
 
 	// Helper function for accessing individual bits in memory; Address: [0, 15]
@@ -183,6 +192,27 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 
 		// Inform the log
 		EventLog.getEventLog().addEntry("Repainted RAM address " + address);
+	}
+	
+	public void marChange(byte newMarVal) {		
+		// Replace the old mar val with correctly painted bits
+		valChanged(this.marVal);
+		this.marVal = newMarVal;
+		
+		// Paint the MAR bits with the right color
+		for(int i = 0; i <= 7; i++) {
+			this.butts[newMarVal][i].setBackground(COLOR_MAR);
+			if (i == 0) {
+				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 2, 2, 0, Color.BLACK));
+
+			} else if (i==7) {
+				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 0, 2, 2, Color.BLACK));
+
+				
+			} else {
+				this.butts[newMarVal][i].setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, Color.BLACK));
+			}
+		}
 	}
 
 	@Override

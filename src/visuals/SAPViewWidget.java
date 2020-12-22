@@ -45,6 +45,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private JButton cFlag;
 	private JButton zFlag;
 	private SevenSegDisplay display;
+	private RAMViewWidget ramWidget;
 
 	// Constants
 	private static final Dimension BUTTON_SIZE = new Dimension(20, 20);
@@ -54,10 +55,11 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 	private static final Color COLOR_BACKGROUND = new Color(203,246,245);
 	private static final Color WIDGET_BORDER_COLOR = Color.BLACK;
 
-	public SAPViewWidget(sap.SAPModel model, SevenSegDisplay display) {
+	public SAPViewWidget(sap.SAPModel model, SevenSegDisplay display, RAMViewWidget ramWidget) {
 		// Encapsulate the model
 		this.model = model;
 		this.display = display;
+		this.ramWidget = ramWidget;
 		this.setBorder(BorderFactory.createLineBorder(WIDGET_BORDER_COLOR));
 
 		// Add ourselves as a model observer
@@ -383,6 +385,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 3; i++) {
 			marBits[i].setText(decodeRegister(RegisterType.MAR, 3 - i));
 		}
+		this.ramWidget.marChange(newVal);
 	}
 
 	@Override
