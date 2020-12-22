@@ -390,7 +390,7 @@ public class SAPViewWidget extends JPanel implements SAPObserver {
 		for (int i = 0; i <= 7; i++) {
 			outBits[i].setText(decodeRegister(RegisterType.OUT, 7 - i));
 		}
-		this.display.loadVal(newVal,true);
+		this.display.loadVal(newVal);
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -15,7 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class SevenSegDisplay extends JPanel {
+public class SevenSegDisplay extends JPanel implements ActionListener {
 
 	private GridBagConstraints c;
 
@@ -24,6 +26,10 @@ public class SevenSegDisplay extends JPanel {
 	private JLabel cLabel;
 	private JLabel dLabel;
 	private JLabel[] arr;
+	private boolean isSigned;
+	private byte byteVal;
+
+	private JButton modeToggle;
 
 	private static ImageIcon iconZero;
 	private static ImageIcon iconOne;
@@ -37,7 +43,11 @@ public class SevenSegDisplay extends JPanel {
 	private static ImageIcon iconNine;
 	private static ImageIcon iconNegative;
 
-	public SevenSegDisplay(byte val, boolean twosComplement) {
+	private static final Color VIEW_BACKGROUND_COLOR = new Color(225, 246, 203);
+	private static final String TWOS_COMP_LABEL = "[Mode] 2's Complement";
+	private static final String UNSIGNED_LABEL = "[Mode] Unsigned";
+
+	public SevenSegDisplay(byte val) {
 		// Load icons into memory
 		try {
 			BufferedImage picZero = ImageIO.read(getClass().getResource("/include/Zero.png"));
@@ -78,31 +88,51 @@ public class SevenSegDisplay extends JPanel {
 			e.printStackTrace();
 		}
 
-		this.setPreferredSize(new Dimension(250, 100));
+		this.setPreferredSize(new Dimension(260, 105));
 
 		// Set the Layout
 		this.setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
+		this.setBackground(VIEW_BACKGROUND_COLOR);
+		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		this.isSigned = false;
+		this.byteVal = 0;
 
+		// Add the status/toggle button
+		c.gridwidth = 4;
 		c.gridx = 0;
 		c.gridy = 0;
+		c.insets = new Insets(5,0,0,0);
+
+		this.modeToggle = new JButton(UNSIGNED_LABEL);
+		this.modeToggle.setActionCommand("toggle");
+
+		this.modeToggle.addActionListener(this);
+		this.add(modeToggle, c);
+		
+		c.insets = new Insets(0,0,10,0);
+
+		// Add the display bits
+		c.gridwidth = 1;
+		c.gridx = 0;
+		c.gridy = 1;
 		this.aLabel = new JLabel(iconZero);
 
 		this.add(this.aLabel, c);
 		c.gridx = 1;
-		c.gridy = 0;
+		c.gridy = 1;
 		this.bLabel = new JLabel(iconZero);
 
 		this.add(this.bLabel, c);
 
 		c.gridx = 2;
-		c.gridy = 0;
+		c.gridy = 1;
 		this.cLabel = new JLabel(iconZero);
 		this.add(this.cLabel, c);
 
 		c.gridx = 3;
-		c.gridy = 0;
+		c.gridy = 1;
 		this.dLabel = new JLabel(iconZero);
 		this.add(this.dLabel, c);
 
@@ -111,7 +141,7 @@ public class SevenSegDisplay extends JPanel {
 		arr[2] = cLabel;
 		arr[3] = bLabel;
 		arr[4] = aLabel;
-		loadVal(val, twosComplement);
+		loadVal(val, this.isSigned);
 	}
 
 	private void setImage(int position, int val) {
@@ -150,37 +180,52 @@ public class SevenSegDisplay extends JPanel {
 		}
 	}
 
-	public void loadVal(byte val, boolean twosComplement) {
+	public void loadVal(byte val) {
+		loadVal(val, this.isSigned);
+		this.byteVal = val;
+	}
+
+	private void loadVal(byte val, boolean twosComplement) {
 		if (!twosComplement) {
 			int unsignedVal = 0b11111111 & val;
 
 			// Compute ones position
 			int onesPos = unsignedVal % 10;
 			setImage(1, onesPos);
-			
+
 			// Compute tens position
-			int tensPos = (unsignedVal%100) / 10;
+			int tensPos = (unsignedVal % 100) / 10;
 			setImage(2, tensPos);
-			
+
 			// Compute hundreds position
-			int hundredsPos = (unsignedVal%1000) / 100;
+			int hundredsPos = (unsignedVal % 1000) / 100;
 			setImage(3, hundredsPos);
-			
+
 			// Unsigned, so leave the last image as a 0
 			setImage(4, 0);
 			return;
 		}
-		
+
 		// If our number is non-negative, treat it as a unsigned value
 		if (val >= 0) {
 			loadVal(val, false);
 			return;
 		}
-		
+
 		// Else, we have a negative number
 		loadVal((byte) (128 - (0b01111111 & val)), false);
 		setImage(4, -1);
-		
 
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().contentEquals("toggle")) {
+			this.isSigned = !this.isSigned;
+			this.loadVal(this.byteVal);
+			
+			// Change label
+			this.modeToggle.setText(this.isSigned ? TWOS_COMP_LABEL : UNSIGNED_LABEL);
+		}
 	}
 }

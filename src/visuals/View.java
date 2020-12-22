@@ -34,6 +34,7 @@ public class View extends JPanel
 	private RAMViewWidget ramWidget;
 	private JSlider speedSlider;
 	private SevenSegDisplay disp;
+	private JButton numericRepresentationButton;
 
 	// Needed for the auto-runner
 	private boolean isAutoRunning;
@@ -53,11 +54,11 @@ public class View extends JPanel
 		c.fill = GridBagConstraints.VERTICAL;
 
 		// Add the SAP View Widget (Middle part)
-		this.disp = new SevenSegDisplay(this.model.getOut().getVal(), true); // TODO
+		this.disp = new SevenSegDisplay(this.model.getOut().getVal());
 		this.viewWidget = new SAPViewWidget(this.model, disp);
 		c.gridx = 1;
 		c.gridy = 0;
-		c.gridheight = 10;
+		c.gridheight = 8;
 		this.add(viewWidget, c);
 
 		// Add the RAM View Widget
@@ -130,14 +131,14 @@ public class View extends JPanel
 		this.add(this.speedSlider, c);
 
 		// Add gap to the left of the log; add log visualizer
-		c.insets = new Insets(0, 6, 0, 0);
+		c.insets = new Insets(0, 6, 5, 0);
 		logLabel = new JTextArea(1, 1);
 		logLabel.setMaximumSize(new Dimension(20, 20));
 		logLabel.setEditable(false);
 		c.gridx = 3;
 		c.gridy = 6;
 		c.ipadx = 240;
-		c.ipady = 100;
+		c.ipady = 150;
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.VERTICAL;
 		DefaultCaret caret = (DefaultCaret) logLabel.getCaret();
