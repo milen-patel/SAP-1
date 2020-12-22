@@ -102,19 +102,19 @@ public class View extends JPanel
 		// Add speed slider label
 		c.gridx = 3;
 		c.gridy = 4;
-		c.ipady+=5;
+		c.ipady += 5;
 		JLabel t = new JLabel("                    Autoplay Speed");
-		c.insets = new Insets(0,7,-1,5);
+		c.insets = new Insets(0, 7, -1, 5);
 		t.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(t, c);
-		c.ipady-=5;
+		c.ipady -= 5;
 		// Add speed slider
 		c.gridx = 3;
 		c.gridy = 5;
 		this.speedSlider = new JSlider(JSlider.HORIZONTAL, 10, 100, 50);
 		speedSlider.setMajorTickSpacing(10);
 		speedSlider.setBorder(BorderFactory.createLineBorder(Color.black));
-		c.insets = new Insets(0,7,5,5);
+		c.insets = new Insets(0, 7, 5, 5);
 
 		speedSlider.setPaintTicks(true);
 
@@ -146,6 +146,11 @@ public class View extends JPanel
 		sv.setMaximumSize(new Dimension(20, 100));
 		this.add(sv, c);
 
+		c.ipadx = 0;
+		c.ipady = 0;
+		c.gridx = 3;
+		c.gridy = 7;
+		this.add(new JLabel("0"), c);
 		// Add the view as a log observer
 		sap.EventLog.getEventLog().addObserver(this);
 
@@ -165,6 +170,13 @@ public class View extends JPanel
 		if (e.getActionCommand().equals("resetButtonClicked")) {
 			this.model.reset();
 		} else if (e.getActionCommand().contentEquals("clockButton")) {
+			// If the program is auto-running, stop that first
+			if (isAutoRunning) {
+				isAutoRunning = false;
+				bRunner.terminate();
+				bRunner = null;
+			}
+			
 			sap.Clock.getClock().toggleClock();
 		} else if (e.getActionCommand().contentEquals("autoplay")) {
 			if (isAutoRunning) {
@@ -173,7 +185,7 @@ public class View extends JPanel
 				bRunner = null;
 			} else {
 				isAutoRunning = true;
-				bRunner = new BackgroundRunner(this.speedSlider.getMaximum() - this.speedSlider.getValue() + 10);
+				bRunner = new BackgroundRunner(this.speedSlider.getMaximum() - this.speedSlider.getValue() + 25);
 				bRunner.start();
 			}
 		}
@@ -194,8 +206,12 @@ public class View extends JPanel
 			bRunner = null;
 
 			isAutoRunning = true;
-			bRunner = new BackgroundRunner(this.speedSlider.getMaximum() - this.speedSlider.getValue() + 10);
+			bRunner = new BackgroundRunner(this.speedSlider.getMaximum() - this.speedSlider.getValue() + 25);
 			bRunner.start();
 		}
+	}
+	
+	public boolean getIsAutoRunning() {
+		return this.isAutoRunning;
 	}
 }

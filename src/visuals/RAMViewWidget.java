@@ -18,6 +18,7 @@ import sap.Runner;
 public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, ActionListener {
 	// Widget components
 	private sap.SAPModel model;
+	private View view;
 	private GridBagConstraints c;
 	private JButton[][] butts;
 	private JButton clearMemButton;
@@ -26,6 +27,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	private JButton analyzeProgramButton;
 	private JButton assemblerButton;
 	private JPanel parentPanel;
+
 
 	// Constants
 	private static final Dimension buttonSize = new Dimension(20, 20);
@@ -38,6 +40,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		// Store what we need to maintain
 		this.parentPanel = parentPanel;
 		this.model = model;
+		this.view = (View) parentPanel;
 		
 		// Add ourselves as a RAMObserver
 		this.model.getRAM().addRAMObserver(this);
@@ -185,6 +188,19 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 	@Override
 	// Responds to button click indicating a bit change in memory
 	public void actionPerformed(ActionEvent e) {
+		// If the program is automatically playing , then stop it first
+		if (this.view.getIsAutoRunning()) {
+			ActionEvent x = new ActionEvent("",5,"autoplay");
+			this.view.actionPerformed(x);
+			
+			// Sleep so event log doesn't get clustered
+			try {
+				Thread.sleep(25);
+			} catch (InterruptedException e1) {
+				EventLog.getEventLog().addEntry("Failed to sleep for 100 ms");
+			}
+		}
+		
 		// If the user wants to open the assembler
 		if (e.getActionCommand().contentEquals("openAssembler")) {
 			// Create instance of the assembler
