@@ -499,21 +499,33 @@ public class Assembler extends JPanel implements ActionListener {
 				rArr[i] += padBinaryString4Bits(argLDI);
 				break;
 			case JMP:
-				rArr[i] = "0110";
+				// Validate argument exists
 				if (curr.length() == 3) {
 					return "<html>[Assembler Failed] JMP missing arguement. </html>";
 				}
+				
+				// Manually add in the OP Code
+				rArr[i] = "0110";
+				
+				// Grab the argument
 				String arg = curr.substring(3);
-				// Case 0 : No arg provided
+				
+				// Case 0: No argument provided
 				if (arg == null || arg.length() == 0) {
 					return "<html>[Assembler Failed] No parameter given to JMP instruction.</html>";
 				}
-				// Case 1: Argument is binary
+				
+				// Case 1: Argument isn't a valid binary string
+				if (!this.isValidBinaryString(arg)) {
+					return "<html>[Assembler Failed] JZ argument must be a valid binary string.</html>";
+				}
+				
+				// Case 2: Argument is binary
 				rArr[i] += padBinaryString4Bits(arg);
 
 				break;
 			case JC:
-				// Validate argument length
+				// Validate argument exists
 				if (curr.length() == 2) {
 					return "<html>[Assembler Failed] JMP missing arguement. </html>";
 				}
@@ -539,7 +551,7 @@ public class Assembler extends JPanel implements ActionListener {
 				
 				break;
 			case JZ:
-				// Validate argument
+				// Validate argument exists
 				if (curr.length() == 2) {
 					return "<html>[Assembler Failed] JMP missing arguement. </html>";
 				}
