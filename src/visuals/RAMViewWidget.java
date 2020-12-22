@@ -199,11 +199,24 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 		}
 
 		// Add the right borders to the RAM visualization
-		for (int i = 0 ; i < this.butts.length; i++) {
-			this.butts[i][this.butts[0].length-1].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+		for (int i = 0; i < this.butts.length; i++) {
+			this.butts[i][this.butts[0].length - 1].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
 		}
-		
-		
+
+		// Add the bottom border to the RAM visualization
+		for (int i = 0; i < this.butts[0].length; i++) {
+
+			// Bottom right piece gets special border
+			if (i == 7) {
+				this.butts[this.butts.length - 1][i]
+						.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
+			} else {
+				this.butts[this.butts.length - 1][i]
+						.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+			}
+
+		}
+
 		this.marChange(this.marVal);
 		repaint();
 	}
@@ -229,13 +242,22 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			} else {
 				this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 			}
-			
+
 			// If we are on the rightmost position, keep the border
 			if (i == 7) {
 				this.butts[address][i].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
 			} else {
 				this.butts[address][i].setBorder(null);
+			}
+			
+			// If we are on the bottom row, keep the border
+			if (address==15) {
+				if (i == 7) {
+					this.butts[address][i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.BLACK));
 
+				} else {
+					this.butts[address][i].setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+				}
 			}
 		}
 
