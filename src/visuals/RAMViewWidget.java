@@ -198,6 +198,12 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			}
 		}
 
+		// Add the right borders to the RAM visualization
+		for (int i = 0 ; i < this.butts.length; i++) {
+			this.butts[i][this.butts[0].length-1].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+		}
+		
+		
 		this.marChange(this.marVal);
 		repaint();
 	}
@@ -223,8 +229,14 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			} else {
 				this.butts[address][i].setBackground(butts[address][i].getText().equals("1") ? COLOR_ON : COLOR_OFF);
 			}
+			
+			// If we are on the rightmost position, keep the border
+			if (i == 7) {
+				this.butts[address][i].setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
+			} else {
+				this.butts[address][i].setBorder(null);
 
-			this.butts[address][i].setBorder(null);
+			}
 		}
 
 		// Inform the log
