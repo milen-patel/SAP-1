@@ -72,11 +72,18 @@ public class SAPModel implements ClockObserver {
 
 		// Register the model as a clock observer
 		Clock.getClock().addObserver(this);
+
+		this.clockChange();
 	}
 
 	public void reset() {
 		// Inform the log
 		this.log.addEntry("User has requested to reset SAP...");
+
+		// Reset clock if and only if clock is high
+		if (Clock.getClock().getStatus()) {
+			Clock.getClock().toggleClock();
+		}
 
 		// Clear all registers and other data values (except memory)
 		this.regA.clear();
@@ -90,10 +97,7 @@ public class SAPModel implements ClockObserver {
 		this.adder.regFlags.clear();
 		this.resetAllControlLines();
 
-		// Reset clock if and only if clock is high
-		if (Clock.getClock().getStatus()) {
-			Clock.getClock().toggleClock();
-		}
+		this.clockChange();
 
 		// Notify observers so view can repaint itself
 		for (SAPObserver o : observers) {
@@ -216,7 +220,8 @@ public class SAPModel implements ClockObserver {
 
 		// Then, add the argument to logVal
 		logVal += " ";
-		if (t != InstructionTypes.NOP && t != InstructionTypes.INVALID && t != InstructionTypes.HLT && t != InstructionTypes.OUT) {
+		if (t != InstructionTypes.NOP && t != InstructionTypes.INVALID && t != InstructionTypes.HLT
+				&& t != InstructionTypes.OUT) {
 			logVal += this.getRAM().getRAM()[address] & 0b00001111;
 		}
 
@@ -555,7 +560,7 @@ public class SAPModel implements ClockObserver {
 				this.notifyBusChange();
 				EventLog.getEventLog().addEntry("ALU sum value put onto bus");
 			}
-			
+
 			return;
 
 		} else {
@@ -580,7 +585,7 @@ public class SAPModel implements ClockObserver {
 
 			}
 			if (this.controlLines[HLT]) {
-				Clock.getClock().setIsHalted(true); // TODO
+				Clock.getClock().setIsHalted(true);
 			}
 			if (this.controlLines[RI]) {
 				this.RAM.memoryIn(this.bus.getVal());
