@@ -88,6 +88,10 @@ The sample programs included above are brief and are intended to show off some o
 | OUT      	  | 1110          |
 | HLT      	  | 1111          |
 
+
+## Assembler  
+Information coming soon!
+
 ## Known Bugs
 I have tested this program extensively, and have only come across the error listed below; however, I'm sure there are others out there to be discovered.  
 - Reset Memory and Load Counting Program buttons sometimes take two clicks to fully execute. After extensive debugging, I am not sure why this happens but I believe it has something to do with Java Swing since the internal memory values are being updated correctly, just occassionally displayed infrequently.
