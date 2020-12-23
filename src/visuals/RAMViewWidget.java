@@ -368,7 +368,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			return;
 		}
 
-		// If the user clicks the show opcdoes button
+		// If the user clicks the show opcodes button
 		if (e.getActionCommand().contentEquals("showopcodes")) {
 			EventLog.getEventLog().addEntry("=============");
 			EventLog.getEventLog().addEntry("NOP\t0000");
@@ -401,7 +401,7 @@ public class RAMViewWidget extends JPanel implements interfaces.RAMObserver, Act
 			}
 
 			// Add updated memory content for this program
-			arr[0] = 0b01010001;
+			arr[0] = 0b01010000;
 			this.valChanged(0);
 			arr[1] = 0b00101110;
 			this.valChanged(1);
