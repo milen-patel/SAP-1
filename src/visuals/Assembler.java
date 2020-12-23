@@ -253,7 +253,7 @@ public class Assembler extends JPanel implements ActionListener {
 		String rVal = "<html>" + text.replaceAll("\n", "<br>") + "</html>";
 
 		// Edge case
-		if (text.contentEquals("") || text.isBlank()) {
+		if (text.contentEquals("") || text.trim().length() == 0) {
 			return "<html>[Assembler Failed] No Detectable Program.</html>";
 		}
 
@@ -355,7 +355,7 @@ public class Assembler extends JPanel implements ActionListener {
 			if (curr.length() > 0 && curr.charAt(0) == '.') {
 
 				// If the current label isn't define
-				if (curr.length() == 1 || curr.substring(1).isBlank() || curr.substring(1).isEmpty()) {
+				if (curr.length() == 1 || curr.substring(1) == null || curr.substring(1).trim().length() == 0 || curr.substring(1).isEmpty()) {
 					return "<html>[Assembler Failed] Label definition is incomplete.</html>";
 				}
 
